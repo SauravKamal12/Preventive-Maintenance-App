@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Oil Plant Care</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1f2a36">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Oil Plant Care">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#10171f;
+    --steel:#1f2a36;
+    --steel-2:#2c3947;
+    --paper:#eef1f3;
+    --card:#ffffff;
+    --line:#d7dce1;
+    --safety:#d65a1f;
+    --safety-2:#b8480f;
+    --ok:#2f7d4f;
+    --warn:#c0392b;
+    --muted:#6b7684;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    padding-bottom:40px;
+  }
+  header{
+    background:var(--steel);
+    color:#fff;
+    padding:16px 16px 14px;
+    position:sticky;top:0;z-index:10;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+  }
+  .header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .header-left .tag{
+    font-family:"Courier New",monospace;
+    letter-spacing:.12em;
+    font-size:11px;
+    color:var(--safety);
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:4px;
+  }
+  .header-left h1{margin:0;font-size:19px;font-weight:700;}
+  .header-right{text-align:right;flex-shrink:0;}
+  .header-right img{max-height:40px;max-width:100px;object-fit:contain;background:#fff;border-radius:6px;padding:4px 8px;}
+  .header-right .co{font-size:12px;font-weight:700;margin-top:3px;}
+  .header-right .dept{font-size:10px;color:#c7cfd7;line-height:1.3;}
+  .tabs{display:flex;gap:0;margin-top:14px;border-bottom:1px solid var(--steel-2);}
+  .tab{
+    flex:1;text-align:center;padding:10px 4px;font-size:13px;font-weight:600;
+    color:#9aa7b4;cursor:pointer;border-bottom:2px solid transparent;
+  }
+  .tab.active{color:#fff;border-bottom-color:var(--safety);}
+  main{max-width:640px;margin:0 auto;padding:16px;}
+  .view{display:none;}
+  .view.active{display:block;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .card h2{
+    font-size:12px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--muted);margin:0 0 12px;font-weight:700;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card h2::before{
+    content:"";width:3px;height:14px;background:var(--safety);display:inline-block;
+  }
+  .card .sub{font-size:11px;color:var(--muted);margin:-6px 0 12px;}
+  label{
+    display:block;font-size:13px;font-weight:600;color:var(--steel);margin:10px 0 5px;
+  }
+  label:first-child{margin-top:0;}
+  input[type=text],input[type=date],input[type=time],input[type=number],textarea,select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+    font-size:15px;font-family:inherit;background:#fbfbfc;color:var(--ink);
+  }
+  input[readonly]{background:#eef0f2;color:var(--muted);}
+  textarea{min-height:70px;resize:vertical;}
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--safety);outline-offset:1px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 16px;border-radius:8px;border:none;font-size:14px;font-weight:700;
+    cursor:pointer;width:100%;
+  }
+  .btn-primary{background:var(--safety);color:#fff;}
+  .btn-primary:active{background:var(--safety-2);}
+  .btn-dark{background:var(--steel);color:#fff;}
+  .btn-outline{background:#fff;color:var(--steel);border:1px solid var(--line);}
+  .btn-danger{background:#fff;color:var(--warn);border:1px solid #e3b5ae;}
+  .btn-sm{padding:8px 12px;font-size:13px;width:auto;}
+  .gps-box{
+    background:#f3f6f4;border:1px dashed #b9c7bd;border-radius:8px;padding:12px;
+    font-family:"Courier New",monospace;font-size:13px;color:var(--steel);
+  }
+  .gps-box.pending{color:var(--muted);}
+  .gps-ok{color:var(--ok);font-weight:700;}
+  .checklist-section-h{
+    font-size:11px;font-weight:700;color:var(--safety);text-transform:uppercase;
+    letter-spacing:.05em;margin:16px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--line);
+  }
+  .checklist-section-h:first-child{margin-top:0;}
+  .checklist-item{
+    border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px;
+  }
+  .checklist-item .q{font-size:14px;font-weight:600;margin-bottom:8px;}
+  .checklist-extra{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+  .checklist-extra input{
+    flex:1;min-width:110px;padding:7px 8px;font-size:12px;
+    border:1px solid var(--line);border-radius:6px;background:#fbfbfc;font-family:inherit;
+  }
+  .seg{display:flex;gap:6px;}
+  .seg button{
+    flex:1;padding:9px 4px;font-size:12px;font-weight:700;border-radius:6px;
+    border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;
+  }
+  .seg button.sel-yes.on{background:var(--ok);color:#fff;border-color:var(--ok);}
+  .seg button.sel-no.on{background:var(--warn);color:#fff;border-color:var(--warn);}
+  .seg button.sel-na.on{background:var(--muted);color:#fff;border-color:var(--muted);}
+  .photo-section{margin-bottom:18px;}
+  .photo-section:last-child{margin-bottom:0;}
+  .photo-section .ph-label{font-size:13px;font-weight:700;color:var(--steel);margin-bottom:2px;}
+  .photo-section .ph-hint{font-size:11px;color:var(--muted);margin-bottom:8px;}
+  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .photo-grid .ph{
+    position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--line);
+  }
+  .photo-grid .ph img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-grid .ph .rm{
+    position:absolute;top:3px;right:3px;background:rgba(0,0,0,.6);color:#fff;
+    border:none;border-radius:50%;width:22px;height:22px;font-size:13px;cursor:pointer;
+  }
+  .add-photo{
+    border:2px dashed var(--line);border-radius:8px;aspect-ratio:1;
+    display:flex;align-items:center;justify-content:center;font-size:24px;
+    color:var(--muted);cursor:pointer;background:#fbfbfc;
+  }
+  .hidden{display:none !important;}
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--steel);color:#fff;padding:12px 20px;border-radius:8px;
+    font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.25);z-index:100;
+    max-width:90%;text-align:center;
+  }
+  .report-item{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:14px;margin-bottom:10px;
+  }
+  .report-item .meta{font-size:12px;color:var(--muted);margin-top:2px;}
+  .report-item .title{font-weight:700;font-size:15px;}
+  .report-actions{display:flex;gap:8px;margin-top:10px;}
+  .empty-state{text-align:center;color:var(--muted);padding:40px 20px;font-size:14px;}
+  .field-note{font-size:12px;color:var(--muted);margin-top:4px;}
+  .extra-row{display:flex;gap:6px;margin-bottom:8px;align-items:center;}
+  .extra-row input{flex:1;}
+  .extra-row .rmx{
+    width:34px;height:34px;flex-shrink:0;border-radius:6px;border:1px solid #e3b5ae;
+    background:#fff;color:var(--warn);font-size:15px;cursor:pointer;
+  }
+  .logo-preview{display:flex;align-items:center;gap:12px;margin-top:8px;}
+  .logo-preview img{max-height:48px;max-width:120px;object-fit:contain;border:1px solid var(--line);border-radius:6px;padding:4px;background:#fff;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-left">
+      <span class="tag">Offline Field Tool</span>
+      <h1>Preventive Maintenance Report</h1>
+    </div>
+    <div class="header-right" id="headerRight">
+      <div class="co" id="companyNameHeader">Oil India Limited</div>
+      <div class="dept" id="deptHeader">Field Engineering<br>ICE F&amp;WI</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" data-view="new">New Report</div>
+    <div class="tab" data-view="saved">Saved</div>
+    <div class="tab" data-view="settings">Settings</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ NEW REPORT VIEW ============ -->
+  <div class="view active" id="view-new">
+
+    <div class="card">
+      <h2>Location &amp; Time</h2>
+      <div class="gps-box pending" id="gpsBox">No location captured yet.</div>
+      <div style="margin-top:10px;">
+        <button class="btn btn-dark" id="btnGps">📍 Capture GPS Location</button>
+      </div>
+      <div class="row2" style="margin-top:12px;">
+        <div>
+          <label>Date (auto-filled)</label>
+          <input type="date" id="fDate" readonly>
+        </div>
+        <div>
+          <label>Time (auto-filled)</label>
+          <input type="time" id="fTime" readonly>
+        </div>
+      </div>
+      <div class="field-note">Shows the time the report was opened, but locks in the exact moment you tap "Generate PDF Report."</div>
+    </div>
+
+    <div class="card">
+      <h2>Installation &amp; Equipment</h2>
+      <div class="sub">Pick from the equipment catalog to auto-fill, or ignore the dropdowns and type your own values below.</div>
+
+      <label>Installation / Site (catalog)</label>
+      <select id="fSiteSelect">
+        <option value="">— Select installation —</option>
+      </select>
+      <label style="margin-top:12px;">Installation / Site Name</label>
+      <input type="text" id="fSite" placeholder="e.g. Riverside Pump House">
+
+      <label>Equipment (catalog)</label>
+      <select id="fEquipTypeSelect" disabled>
+        <option value="">— Select installation first —</option>
+      </select>
+      <div id="fEquipTypeManualWrap" class="hidden">
+        <label>Equipment (manual)</label>
+        <input type="text" id="fEquipTypeManual" placeholder="Type the equipment name">
+      </div>
+      <input type="hidden" id="fEquipType" value="">
+
+      <label style="margin-top:14px;">Unit No.</label>
+      <input type="text" id="fUnitNo" placeholder="e.g. 1">
+
+      <div style="margin-top:16px;padding-top:12px;border-top:1px dashed var(--line);">
+        <div style="font-size:12px;font-weight:700;color:var(--steel);margin-bottom:6px;">ENGINE</div>
+        <div class="row2">
+          <div>
+            <label>Make (catalog)</label>
+            <select id="fEngineMakeSelect" disabled><option value="">— Select equipment first —</option></select>
+          </div>
+          <div>
+            <label>Model (catalog)</label>
+            <select id="fEngineModelSelect" disabled><option value="">— Select make first —</option></select>
+          </div>
+        </div>
+        <div class="row2" style="margin-top:8px;">
+          <div>
+            <label>Make</label>
+            <input type="text" id="fEngineMake" placeholder="e.g. Cummins">
+          </div>
+          <div>
+            <label>Model</label>
+            <input type="text" id="fEngineModel" placeholder="e.g. G855">
+          </div>
+        </div>
+        <div class="row2" style="margin-top:8px;">
+          <div>
+            <label>Engine Sl. No.</label>
+            <input type="text" id="fEngineSerial">
+          </div>
+          <div>
+            <label>Engine Run Hours</label>
+            <input type="text" id="fEngineRunHours" placeholder="e.g. 12450">
+          </div>
+        </div>
+      </div>
+
+      <div id="pumpBlockWrap" style="margin-top:16px;padding-top:12px;border-top:1px dashed var(--line);">
+        <div style="font-size:12px;font-weight:700;color:var(--steel);margin-bottom:6px;">PUMP</div>
+        <div class="row2">
+          <div>
+            <label>Make (catalog)</label>
+            <select id="fPumpMakeSelect" disabled><option value="">— Select equipment first —</option></select>
+          </div>
+          <div>
+            <label>Model (catalog)</label>
+            <select id="fPumpModelSelect" disabled><option value="">— Select make first —</option></select>
+          </div>
+        </div>
+        <div class="row2" style="margin-top:8px;">
+          <div>
+            <label>Make</label>
+            <input type="text" id="fPumpMake" placeholder="e.g. GD">
+          </div>
+          <div>
+            <label>Model</label>
+            <input type="text" id="fPumpModel" placeholder="e.g. 205TFE">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label>Pump Sl. No.</label>
+            <input type="text" id="fPumpSerial">
+          </div>
+          <div>
+            <label>Plunger Size</label>
+            <input type="text" id="fPlungerSize" placeholder="e.g. 4 1/4">
+          </div>
+        </div>
+        <label>Pump Run Hours</label>
+        <input type="text" id="fPumpRunHours" placeholder="e.g. 8320">
+      </div>
+
+      <label style="margin-top:14px;">Name of Inspecting Technician</label>
+      <input type="text" id="fInspector" placeholder="Name of inspecting technician">
+      <div class="field-note">A blank signature line is added to the PDF — sign by hand after printing.</div>
+    </div>
+
+    <div class="card">
+      <h2>Checklist</h2>
+      <div id="checklistWrap"></div>
+      <button class="btn btn-outline btn-sm" id="btnAddCheck" style="margin-top:4px;">+ Add Custom Check Item</button>
+    </div>
+
+    <div class="card">
+      <h2>Coupling &amp; Instrument Readings</h2>
+      <div id="couplingTypeWrap">
+        <label>Type of Coupling</label>
+        <input type="text" id="fCouplingType" placeholder="e.g. Both Tyre &amp; Shim">
+      </div>
+      <div class="row2" style="margin-top:12px;">
+        <div>
+          <label>Lub Oil Pressure</label>
+          <input type="text" id="fLoPressure" placeholder="e.g. 4 kg">
+        </div>
+        <div>
+          <label>Lub Oil Temp.</label>
+          <input type="text" id="fLoTemp" placeholder="e.g. 65°C">
+        </div>
+      </div>
+      <div class="row2" style="margin-top:8px;">
+        <div>
+          <label>Water Temp.</label>
+          <input type="text" id="fWaterTemp" placeholder="e.g. 70°C">
+        </div>
+        <div>
+          <label>Amp. Meter</label>
+          <input type="text" id="fAmpMeter">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Additional Details</h2>
+      <div class="sub">Add any extra points not covered above — e.g. LO grade, quantity filled, part replaced, etc.</div>
+      <div id="extraWrap"></div>
+      <button class="btn btn-outline btn-sm" id="btnAddExtra" style="margin-top:4px;">+ Add Detail</button>
+    </div>
+
+    <div class="card">
+      <h2>Photographs</h2>
+
+      <div class="photo-section">
+        <div class="ph-label">Equipment Photo — Before</div>
+        <div class="ph-hint">Condition of the equipment prior to maintenance</div>
+        <div class="photo-grid" id="grid-before">
+          <div class="add-photo" data-cat="before">＋</div>
+        </div>
+      </div>
+
+      <div class="photo-section">
+        <div class="ph-label">Equipment Photo — After</div>
+        <div class="ph-hint">Condition of the equipment after maintenance is completed</div>
+        <div class="photo-grid" id="grid-after">
+          <div class="add-photo" data-cat="after">＋</div>
+        </div>
+      </div>
+
+      <div class="photo-section">
+        <div class="ph-label">General Maintenance Photos</div>
+        <div class="ph-hint">Air filter cleaning, radiator cleaning, LO change, etc.</div>
+        <div class="photo-grid" id="grid-general">
+          <div class="add-photo" data-cat="general">＋</div>
+        </div>
+      </div>
+
+      <input type="file" id="photoInput" accept="image/*" capture="environment" multiple class="hidden">
+      <div class="field-note">Photos are compressed and stored on your phone only.</div>
+    </div>
+
+    <div class="card">
+      <h2>Remarks / Observations</h2>
+      <textarea id="fRemarks" placeholder="Any additional notes, spares required, follow-up action..."></textarea>
+    </div>
+
+    <button class="btn btn-primary" id="btnGenerate" style="font-size:15px;padding:15px;">Generate PDF Report</button>
+  </div>
+
+  <!-- ============ SAVED VIEW ============ -->
+  <div class="view" id="view-saved">
+    <div id="savedList"></div>
+  </div>
+
+  <!-- ============ SETTINGS VIEW ============ -->
+  <div class="view" id="view-settings">
+    <div class="card">
+      <h2>Company / Header</h2>
+      <label>Company Name</label>
+      <input type="text" id="setCompany" placeholder="Oil India Limited">
+      <label>Department</label>
+      <input type="text" id="setDept" placeholder="Field Engineering">
+      <label>Section</label>
+      <input type="text" id="setSection" placeholder="ICE F&amp;WI">
+      <label>Report Title</label>
+      <input type="text" id="setTitle" placeholder="Preventive Maintenance Report">
+      <label>Report Number Prefix</label>
+      <input type="text" id="setReportPrefix" placeholder="ICE-F">
+      <label>Technician Initials / Code (optional override)</label>
+      <input type="text" id="setTechCode" placeholder="Auto-detected from technician name" maxlength="6">
+      <div class="field-note">Initials are taken automatically from "Name of Inspecting Technician" on each report (e.g. "Rahul Mech" → RM). This field is only used as a fallback if that name is ever left blank.</div>
+      <div class="field-note">Reports are numbered PREFIX/TECH/EQUIPMENT/YEAR/SEQ — e.g. ICE-F/RM/CODP/2026/001. The sequence auto-increments and is stored on this device.</div>
+      <label>Company Logo</label>
+      <input type="file" id="setLogo" accept="image/*">
+      <div class="logo-preview" id="logoPreviewWrap" style="display:none;">
+        <img id="logoPreview">
+        <button class="btn btn-danger btn-sm" id="btnRemoveLogo">Remove Logo</button>
+      </div>
+      <div class="field-note">Upload your official Oil India Limited logo file (PNG). It's stored only on this device and stamped onto every PDF.</div>
+      <button class="btn btn-dark btn-sm" id="btnSaveSettings" style="margin-top:12px;">Save Settings</button>
+    </div>
+    <div class="card">
+      <h2>Checklist Sections</h2>
+      <div class="field-note">Turn off sections that don't apply to your equipment (e.g. Clutch or Coupling for a direct-driven unit).</div>
+      <div id="sectionTogglesWrap" style="margin-top:8px;"></div>
+    </div>
+    <div class="card">
+      <h2>Additional Checklist Items</h2>
+      <div class="field-note">These extra items appear on every new report, on top of the sections above.</div>
+      <div id="templateWrap" style="margin-top:10px;"></div>
+      <button class="btn btn-outline btn-sm" id="btnAddTemplateItem" style="margin-top:4px;">+ Add Item</button>
+      <button class="btn btn-dark btn-sm" id="btnSaveTemplate" style="margin-top:12px;">Save Checklist Items</button>
+    </div>
+    <div class="card">
+      <h2>Storage</h2>
+      <div class="field-note" id="storageInfo">Calculating...</div>
+      <button class="btn btn-danger btn-sm" id="btnClearAll" style="margin-top:10px;">Delete All Saved Reports</button>
+    </div>
+  </div>
+
+</main>
+
+<div style="text-align:center;padding:10px 16px 26px;font-size:11px;color:var(--muted);">
+  Application developed by Saurav Kamal Medhi for Oil India Limited
+</div>
+
+<script>
+/* ================= DB (IndexedDB) ================= */
+const DB_NAME='pm_reports_db', DB_VER=1;
+let db;
+function openDB(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open(DB_NAME,DB_VER);
+    req.onupgradeneeded=e=>{
+      const d=e.target.result;
+      if(!d.objectStoreNames.contains('reports')) d.createObjectStore('reports',{keyPath:'id'});
+    };
+    req.onsuccess=e=>{db=e.target.result;res(db);};
+    req.onerror=e=>rej(e);
+  });
+}
+function dbPut(store,obj){
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(store,'readwrite');
+    tx.objectStore(store).put(obj);
+    tx.oncomplete=()=>res(true);
+    tx.onerror=e=>rej(e);
+  });
+}
+function dbGetAll(store){
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(store,'readonly');
+    const req=tx.objectStore(store).getAll();
+    req.onsuccess=()=>res(req.result);
+    req.onerror=e=>rej(e);
+  });
+}
+function dbDelete(store,id){
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(store,'readwrite');
+    tx.objectStore(store).delete(id);
+    tx.oncomplete=()=>res(true);
+    tx.onerror=e=>rej(e);
+  });
+}
+function dbClear(store){
+  return new Promise((res,rej)=>{
+    const tx=db.transaction(store,'readwrite');
+    tx.objectStore(store).clear();
+    tx.oncomplete=()=>res(true);
+    tx.onerror=e=>rej(e);
+  });
+}
+
+/* ================= App State ================= */
+let state={
+  gps:null,
+  photos:{before:[],after:[],general:[]},
+  checklist:[], // {q, status:'yes'|'no'|'na'|null}
+  extras:[] // {label, value}
+};
+const OPTS_YESNO=[{label:'Yes',value:'yes',color:'good'},{label:'No',value:'no',color:'bad'},{label:'N/A',value:'na',color:'neutral'}];
+const OPTS_CHECKED_REPLACED=[{label:'Checked',value:'checked',color:'good'},{label:'Replaced',value:'replaced',color:'good'},{label:'Not Done',value:'not_done',color:'bad'}];
+const OPTS_CHECKED_REPLACED_NA=[{label:'Checked',value:'checked',color:'good'},{label:'Replaced',value:'replaced',color:'good'},{label:'N/A',value:'na',color:'neutral'}];
+const DEFAULT_SECTIONS=[
+  {key:'engine',name:'Engine Inspection',items:[
+    {q:'Lub Oil Changed',extra:['Grade of Lub Oil','Quantity']},
+    {q:'Lub Oil Filter Changed',extra:['Quantity']},
+    {q:'Crank Case Opened'},
+    {q:'Strainer Cleaned / OK'},
+    {q:'Fan Belt Replaced',extra:['Quantity']},
+    {q:'Water Pump Belt Replaced',extra:['Size','Quantity']},
+    {q:'Dynamo / Alternator Belt Replaced',extra:['Size','Quantity'],options:OPTS_CHECKED_REPLACED_NA},
+    {q:'Air Filter Element Cleaned / Replaced',options:OPTS_CHECKED_REPLACED_NA},
+    {q:'Tappet Clearance Checked',extra:['Exhaust','Inlet']},
+    {q:'Radiator Cap Fitted'},
+    {q:'Radiator Cleaned'},
+    {q:'Gas Regulator Serviced / Checked',options:OPTS_CHECKED_REPLACED_NA},
+    {q:'Carburetor Serviced / Checked',options:OPTS_CHECKED_REPLACED_NA},
+    {q:'Injector Changed'},
+    {q:'Fuel Filter Changed'},
+    {q:'Fuel Tank Cleaned'},
+    {q:'Exhaust Cleaned'},
+    {q:'Foundation Bolts Tightened'},
+    {q:'Exhaust Flange Condition Good'}
+  ]},
+  {key:'magtronic',name:'Magtronic / Ignition Inspection',items:[
+    {q:'Magtronic Checked / Replaced',options:OPTS_CHECKED_REPLACED},
+    {q:'Self Starter Checked / Replaced',options:OPTS_CHECKED_REPLACED},
+    {q:'Spark Plug Checked / Replaced',options:OPTS_CHECKED_REPLACED},
+    {q:'Ignition Transformer Replaced',extra:['Cylinder Nos.']},
+    {q:'LLOP Safety Checked / Replaced',options:OPTS_CHECKED_REPLACED},
+    {q:'HWT Safety Switch Checked / Replaced',options:OPTS_CHECKED_REPLACED},
+    {q:'Ignition Switches Checked / Replaced',options:OPTS_CHECKED_REPLACED},
+    {q:'Battery Pole Terminal Cleaned'},
+    {q:'Distilled Water Poured'},
+    {q:'Charging System OK'}
+  ]},
+  {key:'pump',name:'Pump Inspection',items:[
+    {q:'Gland Nut Tightened'},
+    {q:'Valve Checked'},
+    {q:'Crank Case Opened'},
+    {q:'Condition of Wiper Good / Satisfactory'},
+    {q:'Foundation Bolt Tightened'},
+    {q:'Lub Oil Changed',extra:['Grade of Lub Oil','Quantity']},
+    {q:'Lub Oil Lines Good / Satisfactory'}
+  ]},
+  {key:'coupling',name:'Coupling Inspection',items:[
+    {q:'Bolts Tightened'},
+    {q:'Condition of Shims Good / Satisfactory (AMR coupling)'},
+    {q:'Condition of Tyre Good / Satisfactory'},
+    {q:'Pedestal Bearing Greased'},
+    {q:'Pedestal Bearing Bolts Tightened'},
+    {q:'Rubber Insert Changed'},
+    {q:'Pedestal Bearing Temperature Normal',extra:['Temperature (Cool/Warm/Hot)']}
+  ]},
+  {key:'clutch',name:'Clutch Inspection',items:[
+    {q:'Condition of Shoe Good / Satisfactory'},
+    {q:'Clutch Adjusted'},
+    {q:'Clutch Greased'}
+  ]}
+];
+const PHOTO_CATS=['before','after','general'];
+const PHOTO_LABELS={before:'Equipment — Before',after:'Equipment — After',general:'General Maintenance'};
+
+function toast(msg,ms=2200){
+  const t=document.createElement('div');
+  t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),ms);
+}
+function uid(){return 'r_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);}
+function equipCode(name){
+  const code=String(name||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  return code || 'GEN';
+}
+function deriveInitials(name){
+  const parts=String(name||'').trim().split(/\s+/).filter(Boolean);
+  if(!parts.length) return '';
+  if(parts.length===1) return parts[0].replace(/[^A-Za-z0-9]/g,'').slice(0,2).toUpperCase();
+  return parts.slice(0,2).map(p=>p.replace(/[^A-Za-z0-9]/g,'').slice(0,1)).join('').toUpperCase();
+}
+function nextReportNumber(equipName,dateStr,inspectorName){
+  const settings=Object.assign(defaultSettings(),JSON.parse(localStorage.getItem('pm_settings')||'null')||{});
+  const year=(dateStr && new Date(dateStr).getFullYear()) || new Date().getFullYear();
+  const manualOverride=String(settings.techCode||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  const techCode=deriveInitials(inspectorName) || manualOverride || 'XX';
+  const key='pm_report_seq_'+year+'_'+techCode;
+  const seq=(parseInt(localStorage.getItem(key)||'0',10))+1;
+  localStorage.setItem(key,String(seq));
+  const prefix=settings.reportPrefix||'ICE-F';
+  return `${prefix}/${techCode}/${equipCode(equipName)}/${year}/${String(seq).padStart(3,'0')}`;
+}
+
+/* ================= Settings ================= */
+const BUILTIN_LOGO='data:image/png;base64,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';
+const EQUIP_DATA=[["BALIJAN QPS","CODP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["BALIJAN QPS","CODP","1","ENGINE","Cummins","G855"],["BALIJAN QPS","CODP","1","GEARBOX","Premium","H1-200"],["BALIJAN QPS","CODP","1","PUMP","GD","205TFE"],["BALIJAN QPS","P/H","1","ENGINE","Ashok Leyland","AL6DTING 2/2"],["BALIJAN QPS","P/H","2","ENGINE","Ashok Leyland","AL6DTING 3/2"],["BALIJAN QPS","SUMP PUMP","1","ENGINE","Kirloskar","HA 494T"],["BALIJAN QPS","SUMP PUMP","1","GEARBOX","Premium",""],["BALIJAN QPS","SUMP PUMP","1","PUMP","ROTOPUMP","RMAB584J7CD3D"],["BALIJAN QPS","SUMP PUMP","2","CLUTCH","GHATGE PATIL","GP1110SP"],["BALIJAN QPS","SUMP PUMP","2","ENGINE","Kirloskar","3R1040PLUS"],["BALIJAN QPS","SUMP PUMP","2","PUMP","KSB","WK100/006"],["BALIMARA QPS","CODP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["BALIMARA QPS","CODP","1","ENGINE","Cummins","GTA-855-P-BC"],["BALIMARA QPS","CODP","1","GEARBOX","HELIMAX","CSA-225"],["BALIMARA QPS","CODP","1","PUMP","NOV","250T-5L"],["BALIMARA QPS","CODP","2","CLUTCH","GHATGE PATIL","GP2140SP"],["BALIMARA QPS","CODP","2","ENGINE","Cummins","GTA-855-P-BC"],["BALIMARA QPS","CODP","2","GEARBOX","HELIMAX","CSA-225"],["BALIMARA QPS","CODP","2","PUMP","NOV","250T-5L"],["BALIMARA QPS","P/H","1","ENGINE","GENERAC","G4.5LTC"],["BALIMARA QPS","P/H","2","ENGINE","GENERAC","G4.5LTC"],["BALIMARA QPS","P/H","3","ENGINE","KIRLOSKAR","HA494"],["BALIMARA QPS","P/H","4","ENGINE","Ashok Leyland","H6G4NG125"],["BALIMARA QPS","P/H","5","ENGINE","Ashok Leyland","H6G4NG126"],["BHEKULAJAN EPS","CODP","1","ENGINE","Cummins","G 855"],["BHEKULAJAN EPS","CODP","1","GEARBOX","Premium","H2-225"],["BHEKULAJAN EPS","CODP","1","PUMP","GD","200 T"],["BHEKULAJAN EPS","CODP","2","ENGINE","Cummins","GN743-P"],["BHEKULAJAN EPS","CODP","2","GEARBOX","GHATGE PATIL","GP2140SP"],["BHEKULAJAN EPS","CODP","2","PUMP","BPCL","63-10R"],["BHEKULAJAN EPS","D/P","1","CLUTCH","GHATGE PATIL","GP2140SP"],["BHEKULAJAN EPS","D/P","1","ENGINE","KIRLOSKAR","6SL9088TA"],["BHEKULAJAN EPS","D/P","2","CLUTCH","GHATGE PATIL","GP2140SP"],["BHEKULAJAN EPS","D/P","2","ENGINE","KIRLOSKAR","6SL9088TA"],["BHEKULAJAN EPS","P/H","1","ENGINE","Ashok Leyland","AL6DTING 3/2"],["BHEKULAJAN EPS","P/H","2","ENGINE","Ashok Leyland","AL6DTING 3/2"],["BHEKULAJAN EPS","P/H","3","ENGINE","Ashok Leyland","AL6DTING 3/2"],["BHOGPARA EPS","P/H","1","ENGINE","Cummins","6B5.9-CNG"],["BHOGPARA EPS","P/H","2","ENGINE","Cummins","G 495 G"],["BHOGPARA OCS","BOOSTER PUMP","1","PUMP","NOV",""],["BHOGPARA OCS","BOOSTER PUMP","2","PUMP","NOV",""],["BHOGPARA OCS","CODP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["BHOGPARA OCS","CODP","1","ENGINE","Cummins","GTA 855 P"],["BHOGPARA OCS","CODP","1","GEARBOX","Shanthi","HSN-225"],["BHOGPARA OCS","CODP","1","PUMP","GD","200TDE001"],["BHOGPARA OCS","CODP","2","CLUTCH","GHATGE PATIL","SP214P1"],["BHOGPARA OCS","CODP","2","ENGINE","Caterpillar","G 3306"],["BHOGPARA OCS","CODP","2","GEARBOX","Premium","N.A"],["BHOGPARA OCS","CODP","2","PUMP","NOV","BD 120 L"],["BHOGPARA OCS","CODP","3","CLUTCH","GHATGE PATIL","SP214P1"],["BHOGPARA OCS","CODP","3","ENGINE","Cummins","GTA 855 US"],["BHOGPARA OCS","CODP","3","GEARBOX","Premium","H1-225"],["BHOGPARA OCS","CODP","3","PUMP","NOV","250T - 5L"],["BHOGPARA OCS","D/P","1","CLUTCH","GHATGE PATIL","GP3140SP"],["BHOGPARA OCS","D/P","1","ENGINE","Kirloskar","6SL 8800 TA"],["BHOGPARA OCS","D/P","1","PUMP","Kirloskar","UP150/53M"],["BHOGPARA OCS","D/P","2","CLUTCH","GHATGE PATIL","GP3140SP"],["BHOGPARA OCS","D/P","2","ENGINE","Kirloskar","6SL 8800 TA"],["BHOGPARA OCS","D/P","2","PUMP","Kirloskar","UP150/53M"],["BHOGPARA OCS","P/H","1","ENGINE","Cummins","GTA-1150-G"],["BHOGPARA OCS","P/H","2","ENGINE","Cummins","GTA-1150-G"],["BHOGPARA OCS","P/H","3","ENGINE","Ashok Leyland","AL6DTING 3/2"],["BHOGPARA OCS","RECHARGING PUMP","1","PUMP","ROTO PUMP","RMAB58P-J7CD5D"],["BHOGPARA OCS","SUMP PUMP","1","PUMP","ROTO PUMP","RMAB58P-J7CD5D"],["BHOGPARA OCS","SUMP PUMP","2","PUMP","KIRLOSKAR","KPD 32/20 QF"],["BHOGPARA SRP#12","SUMP PUMP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["BHOGPARA SRP#12","SUMP PUMP","1","ENGINE","Cummins","G-855"],["BHOGPARA SRP#2","SUMP PUMP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["BHOGPARA SRP#2","SUMP PUMP","1","ENGINE","Cummins","G-855-P"],["BHOGPARA SRP#3","SUMP PUMP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["BHOGPARA SRP#3","SUMP PUMP","1","ENGINE","Cummins","G-855"],["C-BUS 3","CODP","1","GEARBOX","PREMIUM","HGF-160"],["C-BUS 3","CODP","1","PUMP","HYDRA-CELL","Q155ECDGHFESBX"],["C-BUS 3","CODP","2","GEARBOX","PREMIUM","HGF-160"],["C-BUS 3","CODP","2","PUMP","HYDRA-CELL","Q155ECDGHFESBX"],["C-BUS 3","CODP","3","GEARBOX","PREMIUM","HGF-160"],["C-BUS 3","CODP","3","PUMP","HYDRA-CELL","Q155ECDGHFESBX"],["C-BUS 3","CODP","4","GEARBOX","PREMIUM","HGF-160"],["C-BUS 3","CODP","4","PUMP","HYDRA-CELL","Q155ECDGHFESBX"],["C-BUS 3","D/P","1","ENGINE","GREAVES","6G11TA"],["C-BUS 3","UNLOADING PUMP GANTRY -1","1","PUMP","NOT AVAILABLE",""],["C-BUS 3","UNLOADING PUMP GANTRY -1","2","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["C-BUS 3","UNLOADING PUMP GANTRY -1","3","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["C-BUS 3","UNLOADING PUMP GANTRY -1","4","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["C-BUS 3","UNLOADING PUMP GANTRY -1","5","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["C-BUS 3","UNLOADING PUMP GANTRY -2","1","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["C-BUS 3","UNLOADING PUMP GANTRY -2","2","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["C-BUS 3","UNLOADING PUMP GANTRY -2","3","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["C-BUS 3","UNLOADING PUMP GANTRY -2","4","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["C-BUS 3","UNLOADING PUMP GANTRY -2","5","PUMP","ROTO PUMP","RLL075C01B2EJWE2"],["CH (NADUA) WHS","BOOSTER PUMP","1","PUMP","NOV","W"],["CH (NADUA) WHS","BOOSTER PUMP","2","PUMP","NOV","W"],["CH (NADUA) WHS","CODP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["CH (NADUA) WHS","CODP","1","ENGINE","Cummins","GTA 855 P BC"],["CH (NADUA) WHS","CODP","1","GEARBOX","HELIMAX","CSA-225"],["CH (NADUA) WHS","CODP","1","PUMP","NOV","250T-5L"],["CH (NADUA) WHS","CODP","2","CLUTCH","GHATGE PATIL","GP2140SP"],["CH (NADUA) WHS","CODP","2","ENGINE","Cummins","GTA 855 P BC"],["CH (NADUA) WHS","CODP","2","GEARBOX","HELIMAX","CSA-225"],["CH (NADUA) WHS","CODP","2","PUMP","NOV","250T-5L"],["CH (NADUA) WHS","D/P","1","CLUTCH","GHATGE PATIL","GP2140SP"],["CH (NADUA) WHS","D/P","1","ENGINE","Kirloskar","6SL9088TA"],["CH (NADUA) WHS","D/P","1","PUMP","WPIL Ltd","6U18"],["CH (NADUA) WHS","P/H","1","ENGINE","Cummins","6B 5.9 CNG"],["CH (NADUA) WHS","P/H","2","ENGINE","Ashok Leyland","AL6DTING 3/2"],["CH (NADUA) WHS","P/H","3","ENGINE","Ashok Leyland","AL6DTING 3/2"],["CH (NADUA) WHS","P/H","3","ENGINE","Cummins","6B 5.9 CNG"],["CH (NADUA) WHS","P/H","3","ENGINE","Cummins","G-855-G"],["CH (NADUA) WHS","P/H","3","ENGINE","Cummins","G-855-P"],["CH (NADUA) WHS","SUMP PUMP","1","PUMP","Roto Pump","RMAB581-J7CD"],["CH NADUA OCS(NEW)","CODP","1","CLUTCH","TWIN DISC","SP214P1"],["CH NADUA OCS(NEW)","CODP","1","ENGINE","CAT","G3304B"],["CH NADUA OCS(NEW)","CODP","1","GEARBOX","SEW-EURODRIVE","FAF127 AD7"],["CH NADUA OCS(NEW)","CODP","1","PUMP","FMC","M1624API"],["CH NADUA OCS(NEW)","CODP","2","CLUTCH","TWIN DISC","SP214P1"],["CH NADUA OCS(NEW)","CODP","2","ENGINE","CAT","G3304B"],["CH NADUA OCS(NEW)","CODP","2","GEARBOX","SEW-EURODRIVE","FAF127 AD7"],["CH NADUA OCS(NEW)","CODP","2","PUMP","FMC","M1624API"],["CH NADUA OCS(NEW)","CODP","3","CLUTCH","TWIN DISC","SP214P1"],["CH NADUA OCS(NEW)","CODP","3","ENGINE","CAT","G3304B"],["CH NADUA OCS(NEW)","CODP","3","GEARBOX","SEW-EURODRIVE","FAF127 AD7"],["CH NADUA OCS(NEW)","CODP","3","PUMP","FMC","M1624API"],["CH NADUA OCS(NEW)","CODP","4","CLUTCH","TWIN DISC","SP214P1"],["CH NADUA OCS(NEW)","CODP","4","ENGINE","CAT","G3304B"],["CH NADUA OCS(NEW)","CODP","4","GEARBOX","SEW-EURODRIVE","FAF127 AD7"],["CH NADUA OCS(NEW)","CODP","4","PUMP","FMC","M1624API"],["CH NADUA OCS(NEW)","D/P","1","ENGINE","GREAVES","TBD3V6"],["CH NADUA OCS(NEW)","D/P","1","PUMP","WILO MATHER AND PLATT PUMPS PVT. LTD.","SCP 150-530 HA"],["CH NADUA OCS(NEW)","D/P","2","ENGINE","GREAVES","TBD3V6"],["CH NADUA OCS(NEW)","D/P","2","PUMP","WILO MATHER AND PLATT PUMPS PVT. LTD.","SCP 150-530 HA"],["CH NADUA OCS(NEW)","P/H","1","ENGINE","MWM","TCG 2020 V16"],["CH NADUA OCS(NEW)","P/H","2","ENGINE","MWM","TCG 2020 V16"],["CH NADUA OCS(NEW)","P/H","3","ENGINE","CUMMINS","KTA-38-G12"],["CH NADUA OCS(NEW)","P/H","4","ENGINE","Ashok Leyland","AL6DTING 3/2"],["CHABUA-3 EPS","BOOSTER PUMP","1","PUMP","TENGL MISSION MAGNUM PUMP",""],["CHABUA-3 EPS","BOOSTER PUMP","2","PUMP","KIRLOSKAR","KPD 80/26"],["CHABUA-3 EPS","CODP","1","ENGINE","Cummins","G855-P"],["CHABUA-3 EPS","CODP","1","GEARBOX","Shanthi","HSN-180"],["CHABUA-3 EPS","CODP","1","PUMP","GD","205 TDE"],["CHABUA-3 EPS","CODP","2","ENGINE","Cummins","G-855-P"],["CHABUA-3 EPS","CODP","2","GEARBOX","Shanthi","HSN-180"],["CHABUA-3 EPS","CODP","2","PUMP","GD","TFE 115"],["CHABUA-3 EPS","CODP","3","CLUTCH","GHATGE PATIL","GP2140SP"],["CHABUA-3 EPS","CODP","3","ENGINE","Cummins","G-855"],["CHABUA-3 EPS","CODP","3","GEARBOX","Shanthi","HIN 180"],["CHABUA-3 EPS","CODP","3","PUMP","GD","TAE-150T"],["CHABUA-3 EPS","P/H","1","ENGINE","Cummins","6B5.9 G1"],["CHABUA-3 EPS","P/H","2","ENGINE","Ashok Leyland","AL6DTING 2/2"],["CHABUA-3 EPS","P/H","3","ENGINE","Ashok Leyland","AL6DTING 2/2"],["DEOHAL FGGS","CDP (CONDENSATE PUMP)","1","ENGINE","MOTOR DRIVEN",""],["DEOHAL FGGS","CDP (CONDENSATE PUMP)","1","GEARBOX","SHANTHI","HIN-100"],["DEOHAL FGGS","CDP (CONDENSATE PUMP)","1","PUMP","HYDRA-CELL","T100ERDGHFESAC"],["DEOHAL FGGS","CDP (CONDENSATE PUMP)","2","ENGINE","MOTOR DRIVEN",""],["DEOHAL FGGS","CDP (CONDENSATE PUMP)","2","GEARBOX","SHANTHI","HIN-100"],["DEOHAL FGGS","CDP (CONDENSATE PUMP)","2","PUMP","HYDRA-CELL","T100ERDGHFESAC"],["DEOHAL FGGS","D/P","1","ENGINE","KIRLOSKAR","6SL9088TA"],["DEOHAL FGGS","D/P","2","ENGINE","KIRLOSKAR","6SL9088TA"],["DEOHAL FGGS","P/H","1","ENGINE","ASHOK LEYLAND","AL6DTING3/2"],["DEOHAL FGGS","P/H","2","ENGINE","CUMMINS","G-855-G-BC"],["DGD- SAPKAIT QPS","B/L/P","1","ENGINE","Kirloskar","HA494TC"],["DGD- SAPKAIT QPS","B/L/P","1","GEARBOX","Premium","H1-140"],["DGD- SAPKAIT QPS","B/L/P","1","PUMP","Roto Pump","RMAB584-J7CD3D"],["DGD- SAPKAIT QPS","B/L/P","2","ENGINE","Kirloskar","HA 494 T"],["DGD- SAPKAIT QPS","B/L/P","2","GEARBOX","Premium","H1-140"],["DGD- SAPKAIT QPS","B/L/P","2","PUMP","Roto Pump","RMAB584-J70D3D"],["DGD- SAPKAIT QPS","CODP","1","BOOSTER PUMP","NOV","PKS-GS"],["DGD- SAPKAIT QPS","CODP","1","BOOSTER PUMP MOTOR","Kirloskar","KPD100/25"],["DGD- SAPKAIT QPS","CODP","1","CLUTCH","HELIMAX","CSA-225"],["DGD- SAPKAIT QPS","CODP","1","ENGINE","Cummins","GTA855P-BC"],["DGD- SAPKAIT QPS","CODP","1","GEARBOX","HELIMAX","CSA-225"],["DGD- SAPKAIT QPS","CODP","1","PUMP","NOV","250T-5L"],["DGD- SAPKAIT QPS","CODP","2","CLUTCH","GHATGE PATIL","GP3140SP"],["DGD- SAPKAIT QPS","CODP","2","ENGINE","Cummins","GTA-855-C-BC"],["DGD- SAPKAIT QPS","CODP","2","GEARBOX","Shanthi","HIN225"],["DGD- SAPKAIT QPS","CODP","2","PUMP","GD","205T"],["DGD- SAPKAIT QPS","D/P","1","CLUTCH","GHATGE PATIL","GP2140SP"],["DGD- SAPKAIT QPS","D/P","1","ENGINE","GREAVES","6G11TA"],["DGD- SAPKAIT QPS","D/P","1","PUMP","FLOWMORE","HSC"],["DGD- SAPKAIT QPS","D/P","2","CLUTCH","GHATGE PATIL","GP2140SP"],["DGD- SAPKAIT QPS","D/P","2","ENGINE","GREAVES","6G11TA"],["DGD- SAPKAIT QPS","D/P","2","PUMP","FLOWMORE","HSC"],["DGD- SAPKAIT QPS","P/H","1","ENGINE","Cummins","G855"],["DGD- SAPKAIT QPS","P/H","2","ENGINE","Kirloskar","4R.1040TAGI"],["DGD- SAPKAIT QPS","P/H","3","ENGINE","Cummins","G855-G-BC"],["DGD- SAPKAIT QPS","P/H","4","ENGINE","Kirloskar","HA-494-T"],["DGD- SAPKAIT QPS","P/H (new)","1","ENGINE","Ashok Leyland","H6G4NG125"],["DGD- SAPKAIT QPS","P/H (new)","2","ENGINE","Ashok Leyland","H6G4NG125"],["DGF BALIMARA WHS","CODP","1","BOOSTER PUMP","NOV",""],["DGF BALIMARA WHS","CODP","1","BOOSTER PUMP MOTOR","CG",""],["DGF BALIMARA WHS","CODP","1","ENGINE","Cummins","GTA 855P BC"],["DGF BALIMARA WHS","CODP","1","GEARBOX","HELIMAX","CSA-225"],["DGF BALIMARA WHS","CODP","1","PUMP","NOV","250T-5L"],["DGF BALIMARA WHS","CODP","2","BOOSTER PUMP","NOV",""],["DGF BALIMARA WHS","CODP","2","BOOSTER PUMP MOTOR","CG",""],["DGF BALIMARA WHS","CODP","2","ENGINE","Cummins","GTA 855P BC"],["DGF BALIMARA WHS","CODP","2","GEARBOX","HELIMAX","CSA-225"],["DGF BALIMARA WHS","CODP","2","PUMP","NOV","250T-5L"],["DGF BALIMARA WHS","D/P","1","ENGINE","Greaves","6G11TA"],["DGF BALIMARA WHS","D/P","2","ENGINE","Greaves","6G11TA"],["DGF BALIMARA WHS","P/H","1","ENGINE","Cummins","6B5.9CNG"],["DGF BALIMARA WHS","P/H","2","ENGINE","Kirloskar","HA 494"],["DIAN QPS","B/L/P","1","PUMP","NETZSCH","MB-1F"],["DIAN QPS","B/L/P","2","PUMP","KIRLOSKAR","3R1040"],["DIAN QPS","CODP","1","ENGINE","Caterpillar","G3306"],["DIAN QPS","CODP","1","GEARBOX","Premium","H2-225"],["DIAN QPS","CODP","1","PUMP","BPCL","63-10"],["DIAN QPS","CODP","2","CLUTCH","GHATGE PATIL","GP2140SP"],["DIAN QPS","CODP","2","ENGINE","Cummins","G-855"],["DIAN QPS","CODP","2","GEARBOX","Premium","H1-225"],["DIAN QPS","CODP","2","PUMP","BPCL","A-356-D"],["DIAN QPS","P/H","1","ENGINE","Cummins","6B5.9CNG"],["DIAN QPS","P/H","2","ENGINE","Cummins","6B5.9CNG"],["DIAN QPS","P/H","3","ENGINE","Ashok Leyland","H6G4NG125"],["DIKOM BUS","B/UL/P","1","PUMP","Kirloskar","KPD 80/400 OF"],["DIKOM BUS","B/UL/P","2","PUMP","Kirloskar","KPD 80/400 OF"],["DIKOM BUS","B/UL/P","3","CLUTCH","GHATGE PATIL","GP1100CP"],["DIKOM BUS","B/UL/P","3","ENGINE","Kirloskar","HA494"],["DIKOM BUS","B/UL/P","3","GEARBOX","Kirloskar","KPD65/43"],["DIKOM BUS","B/UL/P","3","PUMP","Roto Pump","RLAB631-J7CD3D"],["DIKOM BUS","B/UL/P","4","ENGINE","Kirloskar","HA294"],["DIKOM BUS","B/UL/P","4","GEARBOX","Premium","HI-125"],["DIKOM BUS","B/UL/P","4","PUMP","Roto Pump","RLAB631-J7CD3D"],["DIKOM BUS","D/P","1","ENGINE","KRILOSKAR","6SL9088TA"],["DIKOM BUS","D/P","1","PUMP","WPIL Ltd","6U18"],["DIKOM BUS","D/P","2","CLUTCH","GHATGE PATIL","GP2140SP"],["DIKOM BUS","D/P","2","ENGINE","Kirloskar","6SL9088TA"],["DIKOM BUS","DESPATCH PUMP","1","PUMP","Roto Pump","RMAB5845-J7CD3D"],["DIKOM BUS","DESPATCH PUMP","2","PUMP","Roto Pump","RMAB584-J7CD3D"],["DIKOM BUS","DESPATCH PUMP","3","CLUTCH","GHATGE PATIL","GP1110SP"],["DIKOM BUS","DESPATCH PUMP","3","ENGINE","KRILOSKAR","HA-494-T"],["DIKOM BUS","DESPATCH PUMP","3","GEARBOX","Premium","H1-140"],["DIKOM BUS","DESPATCH PUMP","3","PUMP","Roto Pump","RMAB584-J7CD3D"],["DIKOM BUS","SUMP PUMP","1","PUMP","TORNADO (NETZSCH)","MB-1F"],["DIKOM BUS","SUMP PUMP","2","PUMP","TORNADO (NETZSCH)","MB-1F"],["DIKOM BUS","SUMP PUMP","3","PUMP","Roto Pump","RLAB57MJ7CD5D"],["DIKOM OCS","CODP","1","GEARBOX","Greaves","H2-225"],["DIKOM OCS","CODP","1","PUMP","GD","200TDE001"],["DIKOM OCS","CODP","3","CLUTCH","GHATGE PATIL","GP2140SP"],["DIKOM OCS","CODP","3","ENGINE","Cummins","G 855 P"],["DIKOM OCS","CODP","3","GEARBOX","GREAVES","N.A"],["DIKOM OCS","CODP","3","PUMP","GD","200TDE001"],["DIKOM OCS","CODP","5","CLUTCH","GHATGE PATIL","GP2140SP"],["DIKOM OCS","CODP","5","ENGINE","Cummins","G 855 G"],["DIKOM OCS","CODP","5","PUMP","BPCL","83-20 R"],["DIKOM OCS","D/P","1","ENGINE","Cummins","NT 743 - F1"],["DIKOM OCS","D/P","1","PUMP","KIRLOSKAR","N.A"],["DIKOM OCS","D/P","2","ENGINE","Cummins","NT 743 - F1"],["DIKOM OCS","D/P","2","PUMP","Kirloskar","N.A"],["DIKOM OCS","P/H","1","ENGINE","Cummins","GTA 2300 G"],["DIKOM OCS","P/H","2","ENGINE","Cummins","GTA 2300 G"],["DIKOM OCS","P/H","3","ENGINE","Cummins","G 1170 G"],["DIKOM W/I","P/H","1","ENGINE","MWM","TCG3016V16"],["DIKOM W/I","P/H","2","ENGINE","MWM","TCG3016V17"],["DIKOM W/I","P/H","3","ENGINE","KIRLOSKAR","4K1080TAG2"],["DIKOM W/I","W/I PUMP","1","GEARBOX","HELIMAX","CSA-225"],["DIKOM W/I","W/I PUMP","1","PUMP","NOV","250T-5L"],["DIKOM W/I","W/I PUMP","2","GEARBOX","HELIMAX","CSA-225"],["DIKOM W/I","W/I PUMP","2","PUMP","NOV","250T-5L"],["DIKOM W/I","W/I PUMP","3","GEARBOX","HELIMAX","CSA-225"],["DIKOM W/I","W/I PUMP","3","PUMP","NOV","250T-5L"],["DIKOM W/I","W/I PUMP","4","GEARBOX","HELIMAX","CSA-225"],["DIKOM W/I","W/I PUMP","4","PUMP","NOV","250T-5L"],["DIKOM W/INJ","AIR COMPRESSOR","1","ENGINE","ELGI","EN11-9.5"],["DIKOM W/INJ","AIR COMPRESSOR","2","ENGINE","ELGI","EN11-9.5"],["DIKOM W/INJ","P/H","1","ENGINE","MWM","TCG3016V16"],["DIKOM W/INJ","P/H","2","ENGINE","MWM","TCG3016V16"],["DIKOM W/INJ","P/H","3","ENGINE","Kirloskar","4K1080TAG2"],["DIKOM W/INJ","W/I PUMP","1","GEARBOX","HELIMAX","CSA-225"],["DIKOM W/INJ","W/I PUMP","1","PUMP","NOV","250T-5L"],["DIKOM W/INJ","W/I PUMP","2","GEARBOX","HELIMAX","CSA-225"],["DIKOM W/INJ","W/I PUMP","2","PUMP","NOV","250T-5L"],["DIKOM W/INJ","W/I PUMP","3","GEARBOX","HELIMAX","CSA-225"],["DIKOM W/INJ","W/I PUMP","3","PUMP","NOV","250T-5L"],["DIKOM W/INJ","W/I PUMP","4","GEARBOX","HELIMAX","CSA-225"],["DIKOM W/INJ","W/I PUMP","4","PUMP","NOV","250T-5L"],["FGGS CHABUA","D/P","1","ENGINE","Kirloskar","6SL9088TA"],["FGGS CHABUA","D/P","2","ENGINE","Kirloskar","6SL9088TA"],["FGGS CHABUA","P/H","1","ENGINE","Cummins","G-855"],["GAJALBASTI W 647","B/L/P","1","ENGINE","Kirloskar","3R1040 PLUS"],["GAJALBASTI W 647","B/L/P","1","PUMP","KSB","WK 100/006"],["GAJALBASTI W 647","B/L/P","2","ENGINE","Kirloskar","3R1040"],["GAJALBASTI W 647","B/L/P","2","PUMP","KSB","WK 100/006"],["GAJALBASTI W 647","P/H","1","ENGINE","EICHER","198ES"],["GAJALBASTI W 647","SRP","1","ENGINE","Cummins","GN 743 P"],["GCS-1","D/P","1","CLUTCH","GHATGE PATEL","GP-3140 SP"],["GCS-1","D/P","1","ENGINE","GREAVES","6G11TA"],["GCS-1","D/P","2","CLUTCH","GHATGE PATEL","GP-3140 SP"],["GCS-1","D/P","2","ENGINE","GREAVES","GP-3140 SP"],["GCS-2","P/H","2","ENGINE","ASHOK LEYLAND","AL6DTING3/2"],["GCS-8","D/P","1","CLUTCH","GHATGE PATEL","GP 3140SP"],["GCS-8","D/P","1","ENGINE","GREAVES","6G11TA"],["GCS-8","D/P","2","CLUTCH","GHATGE PATEL","GP 3140SP"],["GCS-8","D/P","2","ENGINE","GREAVES","6G11TA"],["HAPJAN W/I","P/H","1","ENGINE","CUMMINS","G-855"],["HAPJAN W/I","P/H","2","ENGINE","CUMMINS","G-855-G-BC"],["HAPJAN W/I","W/I PUMP","1","ENGINE","CUMMINS","G-855-P"],["HAPJAN W/I","W/I PUMP","1","GEARBOX","PREMIUM","HI-200(5.06/1P1)"],["HAPJAN W/I","W/I PUMP","1","PUMP","BPCL","A336(63-10R)"],["HAPJAN W/I","W/I PUMP","2","ENGINE","CUMMINS","G855-P"],["HAPJAN W/I","W/I PUMP","2","GEARBOX","PREMIUM","HI-200"],["HAPJAN W/I","W/I PUMP","2","PUMP","BPCL","A336(63-10R)"],["HAPJAN W/I","W/I PUMP","3","ENGINE","CUMMINS","G-855-P"],["HAPJAN W/I","W/I PUMP","3","GEARBOX","PREMIUM","HI-200"],["HAPJAN W/I","W/I PUMP","3","PUMP","BPCL","A336(63-10R)"],["HAPJAN W/I","W/I PUMP","4","CLUTCH","GHATGE PATEL","2140SP"],["HAPJAN W/I","W/I PUMP","4","ENGINE","CUMMINS","G-855-P"],["HAPJAN W/I","W/I PUMP","4","GEARBOX","PREMIUM","HI-200"],["HAPJAN W/I","W/I PUMP","4","PUMP","BPCL","A-366(63-10R)"],["HATIALI EPS","CODP","1","CLUTCH","GHATGE PATIL","SP214P1"],["HATIALI EPS","CODP","1","ENGINE","Cummins","G855 G"],["HATIALI EPS","CODP","1","PUMP","BPCL","366 P"],["HATIALI EPS","CODP","2","CLUTCH","GHATGE PATIL","GP2140SP"],["HATIALI EPS","CODP","2","ENGINE","Cummins","G-743"],["HATIALI EPS","CODP","2","GEARBOX","Premium","H2 200"],["HATIALI EPS","CODP","2","PUMP","GD","180 TDE"],["HATIALI EPS","CODP","3","ENGINE","Greaves",""],["HATIALI EPS","CODP","3","PUMP","L&T",""],["HATIALI EPS","CODP","4","ENGINE","Cummins","G 855 P"],["HATIALI EPS","CODP","4","GEARBOX","Shanthi","HSN-180"],["HATIALI EPS","CODP","4","PUMP","GD","200TDE001"],["HATIALI EPS","P/H","1","ENGINE","Ashok Leyland","AL6DTING 3/2"],["HATIALI EPS","P/H","2","ENGINE","Cummins","G-855-P"],["HATIALI EPS","P/H","4","ENGINE","Ashok Leyland","AL6DTING 3/2"],["HATIALI FGGS","P/H","1","ENGINE","GENERAC","G4.5LTC"],["HATIALI FGGS","P/H","2","ENGINE","GENERAC","G4.5LTC"],["HJC - EPS","BOOSTER PUMP","1","PUMP","BPCL","SMK4*6*10H"],["HJC - EPS","CODP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["HJC - EPS","CODP","1","ENGINE","Cummins","NT-743-P"],["HJC - EPS","CODP","1","PUMP","OILWELL BRITAIN","336-P"],["HJC - EPS","CODP","2","CLUTCH","GHATGE PATIL","GP2140SP"],["HJC - EPS","CODP","2","ENGINE","Cummins","G-855"],["HJC - EPS","CODP","2","GEARBOX","Premium","H1-225"],["HJC - EPS","CODP","2","PUMP","BPCL","A-356-D"],["HJC - EPS","CODP","3","CLUTCH","Caterpillar","SP214107"],["HJC - EPS","CODP","3","ENGINE","Caterpillar","G-3306"],["HJC - EPS","CODP","3","GEARBOX","Shanthi","HSN-180"],["HJC - EPS","CODP","3","PUMP","GD","115 TEE"],["HJC - EPS","P/H","1","ENGINE","Ashok Leyland","AL6DTING 3/2"],["HJC - EPS","P/H","2","ENGINE","Cummins","G-855-P-BC"],["HJC - EPS","P/H","3","ENGINE","Cummins","G-855-P"],["HJC W/I","W/I PUMP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["HJC W/I","W/I PUMP","1","ENGINE","Cummins","G-855"],["HJC W/I","W/I PUMP","1","GEARBOX","Premium","HI-200"],["HJC W/I","W/I PUMP","1","PUMP","BPCL","A336(63-10R)"],["HWDH WHS","BOOSTER PUMP","1","PUMP","NOV","M"],["HWDH WHS","BOOSTER PUMP","2","PUMP","NOV","M"],["HWDH WHS","BOOSTER PUMP","3","PUMP","KIRLOSKAR","KPD100/26"],["HWDH WHS","CODP","1","CLUTCH","CATERPILLAR","13F314P1"],["HWDH WHS","CODP","1","ENGINE","CATERPILLAR","G30406"],["HWDH WHS","CODP","1","GEARBOX","PREMIUM","HI-225"],["HWDH WHS","CODP","1","PUMP","NOV","BD-150L"],["HWDH WHS","CODP","2","GEARBOX","PREMIUM","H2-180"],["HWDH WHS","CODP","2","PUMP","NOV","BD-120L"],["HWDH WHS","CODP","3","ENGINE","CUMMINS","GTA-855-C-BC"],["HWDH WHS","CODP","3","GEARBOX","SHANTHI","HIN-225"],["HWDH WHS","CODP","3","PUMP","GD","GD-205T"],["HWDH WHS","D/P","1","CLUTCH","GHATGE PATEL","GP3140SP"],["HWDH WHS","D/P","1","ENGINE","GREAVES","TBD3V8MK11RC"],["HWDH WHS","D/P","2","CLUTCH","GHATGE PATEL","GP2140SP"],["HWDH WHS","D/P","2","ENGINE","GREAVES","6G11TA"],["HWDH WHS","P/H","1","ENGINE","CUMMINS","G-855"],["HWDH WHS","P/H","2","ENGINE","CUMMINS","G-855-P-BC"],["HWDH WHS","SUMP PUMP","1","PUMP","ROTO PUMP","RMAB581-J7CD5D"],["JORAJAN OCS","CODP","1","CLUTCH","GHATGE PATEL","GP 2140SP"],["JORAJAN OCS","CODP","1","ENGINE","CUMMINS","G-855"],["JORAJAN OCS","CODP","1","GEARBOX","SHANTHI","H2N180"],["JORAJAN OCS","CODP","1","PUMP","GOMA","T-60000"],["JORAJAN OCS","D/P","1","ENGINE","CUMMINS","NT-743-F1"],["JORAJAN OCS","D/P","2","CLUTCH","GHATGE PATEL","GP2140 SP"],["JORAJAN OCS","D/P","2","ENGINE","GREAVES","6G11TA"],["JORAJAN OCS","FOR CODP BOOSTR PUMP","1","PUMP","WILO","MISO 65250"],["JORAJAN OCS","P/H","1","ENGINE","CUMMINS","G-855-G"],["JORAJAN OCS","P/H","2","ENGINE","CUMMINS","G-855-G-BC"],["JORAJAN OCS","P/H","3","ENGINE","CUMMINS","G-855-G"],["JORAJAN OCS","RECHARGING PUMP","1","PUMP","ROTO PUMP","RMAB581-17CD5A"],["JORAJAN OCS","RECHARGING PUMP","2","PUMP","NETZCH","TORNADO(MB-1F)"],["JORAJAN OCS","SUMP PUMP","1","CLUTCH","GHATGE PATEL","GP 1100CB"],["JORAJAN OCS","SUMP PUMP","1","ENGINE","KIRLOSKAR","HA494TC"],["JORAJAN OCS","SUMP PUMP","1","PUMP","KIRLOSKAR","kpd65/43"],["JORAJAN WELL#12","P/H","1","ENGINE","EICHER TMTL","422TC"],["JORAJAN WELL#12","P/H","2","ENGINE","KIRLOSKAR","HA494"],["JORAJAN WELL#12","P/H","3","ENGINE","TRAILER MOUNTED EICHER","19800000"],["JORAJAN WELL#12","P/H","4","ENGINE","EICHER","198ES"],["JOYPUR OCS","CODP","1","CLUTCH","GHATGE PATEL","GP2140SP"],["JOYPUR OCS","CODP","1","ENGINE","CUMMINS","G-855-G"],["JOYPUR OCS","CODP","1","PUMP","BPCL","83-20R"],["JOYPUR OCS","CODP","2","CLUTCH","GHATGE PATEL","GP2140 SP"],["JOYPUR OCS","CODP","2","ENGINE","CUMMINS","G-855-P-BC"],["JOYPUR OCS","CODP","2","GEARBOX","PREMIUM","HI-225"],["JOYPUR OCS","CODP","2","PUMP","BPCL","A3-356D"],["JOYPUR OCS","D/P","1","CLUTCH","GHATGE PATEL","GP 2140 SP"],["JOYPUR OCS","D/P","1","ENGINE","GREAVES","6G11TA"],["JOYPUR OCS","D/P","2","CLUTCH","GHATGE PATEL","GP 2140 SP"],["JOYPUR OCS","D/P","2","ENGINE","GREAVES","6G11TA"],["JOYPUR OCS","P/H","1","ENGINE","CUMMINS","GTA-1150-G"],["JOYPUR OCS","P/H","2","ENGINE","KIRLOSKAR","HA494"],["JOYPUR OCS","P/H","3","ENGINE","CUMMINS","6B 5.9 CNG"],["JOYPUR OCS","SUMP PUMP","1","PUMP","ROTO PUMP","RMAB581-J7CD5A"],["KATHALGURI MUD PLANT","MUD PUMP","1","CLUTCH","GHATGE PATEL","GP3140SP"],["KATHALGURI MUD PLANT","MUD PUMP","1","ENGINE","CUMMINS","G-855-P"],["KATHALGURI MUD PLANT","MUD PUMP","1","GEARBOX","SHANTHI","HSN225"],["KATHALGURI MUD PLANT","MUD PUMP","1","PUMP","GOMA","T-60135"],["KATHALGURI MUD PLANT","MUD PUMP","2","CLUTCH","GHATGE PATEL","GP3140SP"],["KATHALGURI MUD PLANT","MUD PUMP","2","ENGINE","CUMMINS","G-855-P"],["KATHALGURI MUD PLANT","MUD PUMP","2","GEARBOX","SHANTHI","HSN225"],["KATHALGURI MUD PLANT","MUD PUMP","2","PUMP","GOMA","T-60135"],["KATHALGURI MUD PLANT","P/H","1","ENGINE","CUMMINS","G-855-P"],["KATHALGURI OCS","CODP","1","BOOSTER PUMP","KIRLOSKAR","KPD80/26"],["KATHALGURI OCS","CODP","1","CLUTCH","GHATGE PATEL","GP2140SP"],["KATHALGURI OCS","CODP","1","ENGINE","CUMMINS","G-855"],["KATHALGURI OCS","CODP","1","GEARBOX","SHANTHI","HIN-180"],["KATHALGURI OCS","CODP","1","PUMP","GD","TAE(GD-150T)"],["KATHALGURI OCS","CODP","2","CLUTCH","GHATGE PATEL","GP 2140SP"],["KATHALGURI OCS","CODP","2","ENGINE","CUMMINS","G-855-P-BC"],["KATHALGURI OCS","CODP","2","PUMP","BPCL","336-P"],["KATHALGURI OCS","D/P","1","ENGINE","CUMMINS","NT-743-F1"],["KATHALGURI OCS","D/P","2","CLUTCH","GHATGE PATEL","GP-214P1"],["KATHALGURI OCS","D/P","2","ENGINE","CUMMINS","NT-743-P"],["KATHALGURI OCS","P/H","1","ENGINE","CUMMINS","G-1710-G"],["KATHALGURI OCS","P/H","2","ENGINE","CUMMINS","G-855-P-BC"],["KATHALGURI OCS","P/H","3","ENGINE","CUMMINS","2300"],["KATHALGURI OCS","P/H","4","ENGINE","CUMMINS","2300"],["KATHALGURI OCS","SUMP PUMP","1","PUMP","ROTO PUMP","RMAB581-J7CD5D"],["KATHALGURI OCS","SUMP PUMP","2","PUMP","ROTO PUMP","RLAB57MJ7CD5D"],["KATHALGURI OCS","SUMP PUMP","3 NEW","CLUTCH","GHATGE PATEL","GP110CP"],["KATHALGURI OCS","SUMP PUMP","3 NEW","ENGINE","KIRLOSKAR","HA494TC"],["KATHALGURI OCS","SUMP PUMP","3 NEW","PUMP","KIRLOSKAR","kpd65/43"],["KOTHALONI OCS","CODP","1","CLUTCH","GHATGE PATIL","GP-2140 SP"],["KOTHALONI OCS","CODP","1","ENGINE","Cummins","G-855-G"],["KOTHALONI OCS","CODP","1","GEARBOX","Premium","H2-200"],["KOTHALONI OCS","CODP","1","PUMP","GD","200TDE001"],["KOTHALONI OCS","CODP","2","CLUTCH","Twindisc","SP214P1"],["KOTHALONI OCS","CODP","2","ENGINE","Cummins","GN-743-P"],["KOTHALONI OCS","CODP","2","GEARBOX","Shanthi","SBH 225"],["KOTHALONI OCS","CODP","2","PUMP","GD","200TDE001"],["KOTHALONI OCS","CODP","3","CLUTCH","GHATGE PATIL","GP-2140 SP"],["KOTHALONI OCS","CODP","3","ENGINE","Cummins","G855-P"],["KOTHALONI OCS","CODP","3","GEARBOX","Shanthi","SBH 225"],["KOTHALONI OCS","CODP","3","PUMP","GD","GD 200T"],["KOTHALONI OCS","CODP","4","CLUTCH","GHATGE PATIL","GP-2140 SP"],["KOTHALONI OCS","CODP","4","ENGINE","Cummins","G855-P"],["KOTHALONI OCS","CODP","4","PUMP","BPCL","83-20R"],["KOTHALONI OCS","CODP","5","CLUTCH","GHATGE PATIL","GP-2140 SP"],["KOTHALONI OCS","CODP","5","ENGINE","Cummins","G855-P"],["KOTHALONI OCS","CODP","5","GEARBOX","Premium","H2 225"],["KOTHALONI OCS","CODP","5","PUMP","GD","205 TFE"],["KOTHALONI OCS","CODP","6","ENGINE","Caterpillar","G3306"],["KOTHALONI OCS","CODP","6","GEARBOX","Premium","H2-225"],["KOTHALONI OCS","CODP","6","PUMP","BPCL","63-10"],["KOTHALONI OCS","D/P","1","CLUTCH","GHATGE PATIL","GP-214 P1"],["KOTHALONI OCS","D/P","1","ENGINE","Cummins","NT 743 - F1"],["KOTHALONI OCS","D/P","2","CLUTCH","GHATGE PATIL","GP-214 P1"],["KOTHALONI OCS","D/P","2","ENGINE","Cummins","NT 743 - F1"],["KOTHALONI OCS","DED LUBE PUMP","1","CLUTCH","","GP1100GP"],["KOTHALONI OCS","DED LUBE PUMP","1","ENGINE","KIRLOSKAR","HA494TC"],["KOTHALONI OCS","P/H","1","ENGINE","Cummins","GV 1710 G"],["KOTHALONI OCS","P/H","2","ENGINE","Cummins","GV 1710 P"],["KOTHALONI OCS","SUMP PUMP","1","PUMP","Rotopump","4RNA-40"],["KOTHALONI OCS","SUMP PUMP","2","PUMP","Rotopump","RLAB57MJ7CD5D"],["KUCHIJAN FGGS","CDP","1","PUMP","L&T","LT-800"],["KUCHIJAN FGGS","CDP","2","PUMP","L&T","LT-800"],["KUCHIJAN FGGS","D/P","1","ENGINE","KIRLOSKAR","6SL9088TA"],["KUCHIJAN FGGS","D/P","1","GEARBOX","GHATGE PATEL","GP2140SP"],["KUCHIJAN FGGS","D/P","2","ENGINE","KIRLOSKAR","6SL9088TA"],["KUCHIJAN FGGS","D/P","2","GEARBOX","GHATGE PATEL","GP2140SP"],["KUCHIJAN FGGS","P/H","1","ENGINE","ASHOK LEYLAND","6B5.9G"],["KUCHIJAN FGGS","P/H","2","ENGINE","CUMMINS","G-855-G"],["KUCHIJAN FGGS","P/H","3","ENGINE","ASHOK LEYLAND","6B5.9 CNG"],["LANGKASHI OCS","CODP","1","ENGINE","FOR OVERHAULING",""],["LANGKASHI OCS","CODP","1","GEARBOX","PREMIUM","HI-225"],["LANGKASHI OCS","CODP","1","PUMP","BPCL","A-356-D"],["LANGKASHI OCS","CODP","2","CLUTCH","GHATGE PATEL","GP2140SP"],["LANGKASHI OCS","CODP","2","ENGINE","CUMMINS","G-855"],["LANGKASHI OCS","CODP","2","GEARBOX","PREMIUM","HI-225"],["LANGKASHI OCS","CODP","2","PUMP","BPCL","A-356-D"],["LANGKASHI OCS","D/P","1","CLUTCH","GHATGE PATEL","SP214P1"],["LANGKASHI OCS","D/P","1","ENGINE","CUMMINS","NT-743-P"],["LANGKASHI OCS","D/P","2","CLUTCH","GHATGE PATEL","SP214P1"],["LANGKASHI OCS","D/P","2","ENGINE","CUMMINS","NT-743-F1"],["LANGKASHI OCS","P/H","1","ENGINE","ASHOK LEYLAND","AL6DTING3/2"],["LANGKASHI OCS","P/H","2","ENGINE","CUMMINS","G-855-P-BC"],["LANGKASHI OCS","P/H","3","ENGINE","CUMMINS","GTA-1150-G"],["LANGKASHI W/I","P/H","1","ENGINE","CUMMINS","G-855-P-BC"],["LANGKASHI W/I","P/H","2","ENGINE","CUMMINS","G-855-P-BC"],["LANGKASHI W/I","W/I PUMP","1","CLUTCH","GHATGE PATEL","GP 2140SP"],["LANGKASHI W/I","W/I PUMP","1","ENGINE","CUMMINS","G-855-P-BC"],["LANGKASHI W/I","W/I PUMP","1","GEARBOX","PREMIUM","HI-200(5.06/1P1)"],["LANGKASHI W/I","W/I PUMP","1","PUMP","BPCL","A336-63/10R"],["LANGKASHI W/I","W/I PUMP","2","CLUTCH","GHATGE PATEL","GP2140SP"],["LANGKASHI W/I","W/I PUMP","2","ENGINE","CUMMINS","G-855-G-BC"],["LANGKASHI W/I","W/I PUMP","2","GEARBOX","PREMIUM","HI-200(5.06/1P1)"],["LANGKASHI W/I","W/I PUMP","2","PUMP","BPCL","A336-63/10R"],["LANGKASHI W/I","W/I PUMP","3","CLUTCH","GHATGE PATEL","GP 2140SP"],["LANGKASHI W/I","W/I PUMP","3","ENGINE","CUMMINS","G-855-G-BC"],["LANGKASHI W/I","W/I PUMP","3","GEARBOX","PREMIUM","HI-200(5.06/1P1)"],["LANGKASHI W/I","W/I PUMP","3","PUMP","BPCL","A336-63/10R"],["LOC BG","B/L/P","1","ENGINE","Kirloskar","HA 494T"],["LOC BG","B/L/P","1","GEARBOX","Premium",""],["LOC BG","B/L/P","1","PUMP","Roto Pump","RMAB584J7-CD3D"],["LOC BG","B/L/P","2","ENGINE","Kirloskar","HA494 TC"],["LOC BG","B/L/P","2","GEARBOX","Premium","H1-125"],["LOC BG","B/L/P","2","PUMP","Roto Pump","RMAB604J0CD5D"],["LOC BG","P/H","1","ENGINE","Greaves Cotton Ltd","3G 11 NAK"],["LOC BG","P/H","2","ENGINE","Kirloskar","HA 394 TC1 G2"],["LOC TAI","B/L/P","1","PUMP","Roto Pump","RMAB581-J7CD5D"],["LOC TAI","B/L/P","2","PUMP","Roto Pump","RMAB581-J7CD5D"],["LOC TAI","B/L/P","3","PUMP","Roto Pump","RMAB581-J7CD5D"],["LOC TAI","P/H","1","ENGINE","Cummins","6B5.9-CNG"],["LOC TAI","P/H","2","ENGINE","Cummins","6B5.9-G1"],["LOC TAI","P/H","3","ENGINE","EICHER","422TC"],["MADHUTING FGGS","P/H","1","ENGINE","KIRLOSKAR","HA394TCJG2"],["MTN#6","P/H","1","ENGINE","Ashok Leyland","AL6DTING 2/2"],["MTN#6","P/H","2","ENGINE","Kirloskar","HA494"],["MUD PLANT 7","P/H","1","ENGINE","MAHINDRA","1125GR"],["MUD PLANT 7","PUMP","1","CLUTCH","GHATGE PATEL","GP2140SP"],["MUD PLANT 7","PUMP","1","ENGINE","CUMMINS","G-855-P"],["MUD PLANT 7","PUMP","1","GEARBOX","SHANTHI","HIN 225"],["MUD PLANT 7","PUMP","1","PUMP","GOMA","T-60135"],["MUD PLANT 7","PUMP","2","CLUTCH","GHATGE PATEL","GP2140SP"],["MUD PLANT 7","PUMP","2","ENGINE","CUMMINS","G-855-P"],["MUD PLANT 7","PUMP","2","GEARBOX","SHANTHI","HIN 225"],["MUD PLANT 7","PUMP","2","PUMP","GOMA","T-60135"],["NAGAJAN FGGS(336)","P/H","1","ENGINE","ASHOK LEYLAND","6B5.9 CNG"],["NAGAJAN FGGS(336)","P/H","2","ENGINE","ASHOK LEYLAND","6B5.9 CNG"],["NAGAJAN OCS","CODP","1","CLUTCH","GHATGE PATEL","GP-2140SP"],["NAGAJAN OCS","CODP","1","ENGINE","CUMMINS","G-743-P"],["NAGAJAN OCS","CODP","1","PUMP","BPCL","63-10R"],["NAGAJAN OCS","CODP","2","CLUTCH","PREMIUM","HI-225"],["NAGAJAN OCS","CODP","2","ENGINE","CATERPILLAR","G3408"],["NAGAJAN OCS","CODP","2","PUMP","NOV","BD-150L"],["NAGAJAN OCS","D/P","1","ENGINE","CUMMINS","NT-743-P"],["NAGAJAN OCS","D/P","2","ENGINE","CUMMINS","NT-743-F1"],["NAGAJAN OCS","D/P","3","ENGINE","GREAVES","6G11TA"],["NAGAJAN OCS","D/P","3","GEARBOX","GHATGE PATEL","GP2140SP"],["NAGAJAN OCS","P/H","1","ENGINE","CUMMINS","G-855-P"],["NAGAJAN OCS","P/H","2","ENGINE","ASHOK LEYLAND","AL6DTING3/2"],["NAGAJAN OCS","P/H","3","ENGINE","CUMMINS","G-855-G"],["NBJ#6","P/H","1","ENGINE","EICHER","PECH5"],["NKF - QPS","CODP","2","ENGINE","Cummins","GTA-855-P-BC"],["NKF - QPS","CODP","2","GEARBOX","HELIMAX","CSA-225"],["NKF - QPS","CODP","2","PUMP","NOV","250T-5L"],["NKF - QPS","CODP","3","ENGINE","Cummins","GTA- 855- P-BC"],["NKF - QPS","CODP","3","GEARBOX","HELIMAX","CSA-225"],["NKF - QPS","CODP","3","PUMP","NOV","250T-5L"],["NKF - QPS","D/P","1","CLUTCH","GHATGE PATIL","GP2140SP"],["NKF - QPS","D/P","1","ENGINE","KIRLOSKAR","6SL9088TA"],["NKF - QPS","D/P","1","PUMP","WPIL Ltd","6U18"],["NKF - QPS","D/P","2","ENGINE","KIRLOSKAR","6SL9088TA"],["NKF - QPS","D/P","2","PUMP","WPIL Ltd","6U18"],["NKF - QPS","P/H","1","ENGINE","GENERAC","G4.5L TC"],["NKF - QPS","P/H","2","ENGINE","Ashok Leyland","AL6DTING 3/2"],["NKF - QPS","P/H","3","ENGINE","Cummins","G-855-G"],["NKF - QPS","SUMP PUMP","1","PUMP","ROTOFLOW","RMAB581-J7CD5A"],["OCS 4","CODP","1","ENGINE","MOTOR DRIVEN",""],["OCS 4","CODP","1","GEARBOX","SHANTHI","SAH140"],["OCS 4","CODP","1","PUMP","GD","100T"],["OCS 4","CODP","2","ENGINE","MOTOR DRIVEN",""],["OCS 4","CODP","2","GEARBOX","PREMIUM","H2-180"],["OCS 4","CODP","2","PUMP","GD","100T(TDDC)"],["OCS 4","D/P","2","CLUTCH","GHATGE PATEL","SP214P1"],["OCS 4","D/P","2","ENGINE","CUMMINS","NT-743-F1"],["OCS 4","SUMP PUMP","1","PUMP","ROTO PUMP","RMAB581-JA7CD5D"],["OCS 4","SUMP PUMP","2","PUMP","ROTO PUMP","4RNA-40/31031"],["OCS-1","CODP","1","GEARBOX","PREMIUM","H2180"],["OCS-1","CODP","1","PUMP","GD","GD-100T"],["OCS-1","CODP","2","GEARBOX","PREMIUM","H2180"],["OCS-1","CODP","2","PUMP","GD","GD-100T"],["OCS-1","D/P","2","CLUTCH","GHATGE PATEL","SP214P1"],["OCS-1","D/P","2","ENGINE","CUMMINS","NT-743-P"],["OCS-1","SUMP PUMP","1","PUMP","ROTO PUMP","RAMAB581-J7CD5D"],["OCS-1","SUMP PUMP","2","PUMP","ROTO PUMP","RAMAB5801-J7CD5A"],["OCS-2","B/P","2","ROTO PUMP","ROTO PUMP","4RNA-40"],["OCS-2","B/P","2","ROTO PUMP","ROTOFLOW","RMAB581-JDCDSA"],["OCS-2","CODP","1","GEARBOX","SHANTHI","H1N-180"],["OCS-2","CODP","1","PUMP","GOMA","T-40000"],["OCS-2","CODP","2","GEARBOX","SHANTHI","H1N-180"],["OCS-2","CODP","2","PUMP","GOMA","T-40000"],["OCS-2","D/P","2","CLUTCH","GHATGE","GP2140SP"],["OCS-2","D/P","2","ENGINE","CUMMINS","NT-743-P"],["OCS-6  NOT IN OPERATION","CODP","1","ENGINE","MOTOR DRIVEN",""],["OCS-6  NOT IN OPERATION","CODP","1","PUMP","NOV","A344"],["OCS-6  NOT IN OPERATION","CODP","2","ENGINE","MOTOR DRIVEN",""],["OCS-6  NOT IN OPERATION","CODP","2","GEARBOX","SHANTHI","HIN 180"],["OCS-6  NOT IN OPERATION","CODP","2","PUMP","GOMA","T-40000"],["OCS-8","CODP","2","ENGINE","CUMMINS","GN-743P"],["OCS-8","CODP","2","PUMP","ARMSTRONG WHITWORTH","A336-P"],["OCS-8","CODP","3","CLUTCH","CATERPILLAR","GP214P107"],["OCS-8","CODP","3","ENGINE","CATERPILLAR","G3306"],["OCS-8","CODP","3","GEARBOX","PREMIUM","H2-180"],["OCS-8","CODP","3","PUMP","NOV","BD-120L"],["OCS-8","D/P","1","ENGINE","CUMMINS","NT-743-F1"],["OCS-8","P/H","1","ENGINE","ASHOK LEYLAND","ALGENG 2/2"],["RAJGARH #14","B/L/P","1","ENGINE","Kirloskar","HA494 TC"],["RAJGARH #14","B/L/P","1","GEARBOX","Premium","H1-125"],["RAJGARH #14","B/L/P","1","PUMP","Roto Pump","RMAB604J0CD5D"],["RAJGARH #14","B/L/P","2","ENGINE","Kirloskar","HA494 TC"],["RAJGARH #14","B/L/P","2","GEARBOX","Premium","H1-125"],["RAJGARH #14","B/L/P","2","PUMP","Roto Pump","RMAB604J05DCD"],["RAJGARH #14","P/H","1","ENGINE","KRILOSKAR","4R1040TAGI"],["RAJGARH #14","P/H","2","ENGINE","EICHER","198ES"],["RAJGARH #14","SRP","1","ENGINE","Cummins","G-855"],["SALMARI GCS","P/H","1","ENGINE","Cummins","G855-G"],["SALMARI GCS","P/H","2","ENGINE","GENERAC","G14.2L"],["SALMARI GCS","P/H","3","ENGINE","GENERAC","G14.2L"],["SALMARI GCS","P/H","4","ENGINE","GENERAC","G14.2L"],["SALMARI OCS-1","BOOSTER PUMP","1","PUMP","NETZSCH","MB-1F"],["SALMARI OCS-1","CODP","1","CLUTCH","GHATGE PATIL","GP-2140SP"],["SALMARI OCS-1","CODP","1","ENGINE","Cummins","G 855 G"],["SALMARI OCS-1","CODP","1","GEARBOX","David Brown Greaves","H2 -225"],["SALMARI OCS-1","CODP","1","PUMP","GD","GD 200 T"],["SALMARI OCS-1","CODP","2","CLUTCH","GHATGE PATIL","GP-2140SP"],["SALMARI OCS-1","CODP","2","ENGINE","Cummins","G-855"],["SALMARI OCS-1","CODP","2","GEARBOX","David Brown Greaves","H2 -225"],["SALMARI OCS-1","CODP","2","PUMP","GD","GD 200 T"],["SALMARI OCS-1","CODP","3","CLUTCH","GHATGE PATIL","GP-2140SP"],["SALMARI OCS-1","CODP","3","ENGINE","Cummins","G-855"],["SALMARI OCS-1","CODP","3","GEARBOX","David Brown Greaves","H1-225"],["SALMARI OCS-1","CODP","3","PUMP","BPCL","A-336 D"],["SALMARI OCS-1","D/P","1","CLUTCH","GHATGE PATIL","SP214P1"],["SALMARI OCS-1","D/P","1","ENGINE","Cummins","NT 743 - F1"],["SALMARI OCS-1","D/P","1","PUMP","Mather platt","8/8 DME"],["SALMARI OCS-1","D/P","2","CLUTCH","GHATGE PATIL","SP214P1"],["SALMARI OCS-1","D/P","2","ENGINE","Cummins","NT 743 - F1"],["SALMARI OCS-1","D/P","2","PUMP","Mather platt","8/8 DME"],["SALMARI OCS-1","D/P","3","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI OCS-1","D/P","3","ENGINE","Greaves","6G11TA"],["SALMARI OCS-1","D/P","4","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI OCS-1","D/P","4","ENGINE","Greaves","6G11TA"],["SALMARI OCS-1","P/H","1","ENGINE","Cummins","G-855-G-BC"],["SALMARI OCS-1","P/H","1","ENGINE","Cummins","G-855-P"],["SALMARI OCS-2","CODP","1","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI OCS-2","CODP","1","ENGINE","Cummins","G 855"],["SALMARI OCS-2","CODP","1","GEARBOX","Shanthi","SBH 225"],["SALMARI OCS-2","CODP","1","PUMP","GD","GD 200 T"],["SALMARI OCS-2","CODP","2","ENGINE","MOTOR DRIVEN","MOTOR DRIVEN"],["SALMARI OCS-2","CODP","2","GEARBOX","Premium","H2-180"],["SALMARI OCS-2","CODP","2","PUMP","GD","GD-100T"],["SALMARI OCS-2","CODP","3","ENGINE","Cummins","G 855 G"],["SALMARI OCS-2","CODP","3","GEARBOX","Shanthi","SBH 225"],["SALMARI OCS-2","CODP","3","PUMP","GD","GD 200 T"],["SALMARI OCS-2","D/P","1","CLUTCH","GHATGE PATIL","SP214P1"],["SALMARI OCS-2","D/P","1","ENGINE","Cummins","NT 743 - F1"],["SALMARI OCS-2","D/P","1","PUMP","KIRLOSKAR","DSM 6/15"],["SALMARI OCS-2","D/P","2","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI OCS-2","D/P","2","ENGINE","KIRLOSKAR","6SL9088TA"],["SALMARI OCS-2","D/P","2","PUMP","KIRLOSKAR","DSM 150/46"],["SALMARI OCS-2","D/P","3","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI OCS-2","D/P","3","ENGINE","KIRLOSKAR","6G11TA"],["SALMARI OCS-2","D/P","4","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI OCS-2","D/P","4","ENGINE","KIRLOSKAR","6G11TA"],["SALMARI OCS-2","P/H","1","ENGINE","GENERAC","G14.2L"],["SALMARI OCS-2","P/H","2","ENGINE","GENERAC","G14.2L"],["SALMARI W/INJ","W/I PUMP","1","CLUTCH","GHATGE PATIL","GP-2140SP"],["SALMARI W/INJ","W/I PUMP","1","ENGINE","Cummins","G855"],["SALMARI W/INJ","W/I PUMP","1","PUMP","NOV","160TP-6M"],["SALMARI W/INJ","W/I PUMP","2","CLUTCH","GHATGE PATIL","GP-2140SP"],["SALMARI W/INJ","W/I PUMP","2","ENGINE","Cummins","G-855-G"],["SALMARI W/INJ","W/I PUMP","2","PUMP","BPCL","60-10R"],["SALMARI W/INJ","W/I PUMP","3","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI W/INJ","W/I PUMP","3","ENGINE","Cummins","G-855-G"],["SALMARI W/INJ","W/I PUMP","3","PUMP","BPCL","63-10R"],["SALMARI W/INJ","W/I PUMP","4","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI W/INJ","W/I PUMP","4","ENGINE","Cummins","G-855-P"],["SALMARI W/INJ","W/I PUMP","4","GEARBOX","Premium","H1-200"],["SALMARI W/INJ","W/I PUMP","4","PUMP","BPCL","A336(63-10R)"],["SALMARI W/INJ","W/I PUMP","5","CLUTCH","GHATGE PATIL","GP2140SP"],["SALMARI W/INJ","W/I PUMP","5","ENGINE","Cummins","G-855-G"],["SALMARI W/INJ","W/I PUMP","5","GEARBOX","Premium","H1-200"],["SALMARI W/INJ","W/I PUMP","5","PUMP","BPCL","A336(63-10R)"],["SHANTI MUD PLANT","MUD PUMP","1","CLUTCH","GHATGE PATEL","GP2140SP"],["SHANTI MUD PLANT","MUD PUMP","1","ENGINE","CUMMINS","G-855"],["SHANTI MUD PLANT","MUD PUMP","1","GEARBOX","SHANTI",""],["SHANTI MUD PLANT","MUD PUMP","1","PUMP","GOMA",""],["SHANTI MUD PLANT","MUD PUMP","2 NEW(NOT COMMISSIONED)","CLUTCH","GHATGE PATEL","GP 2140SP"],["SHANTI MUD PLANT","MUD PUMP","2 NEW(NOT COMMISSIONED)","ENGINE","CUMMINS","G-855(INDIAN)"],["SHANTI MUD PLANT","MUD PUMP","2 NEW(NOT COMMISSIONED)","GEARBOX","SHANTHI","HIN 180"],["SHANTI MUD PLANT","MUD PUMP","2 NEW(NOT COMMISSIONED)","PUMP","GOMA","T-60135"],["SHANTI MUD PLANT","P/H","1","ENGINE","ASHOK LEYLAND","AL6ENG 2/2"],["SHANTI MUD PLANT","P/H","2","ENGINE","ASHOK LEYLAND","AL6ENG 2/2"],["TENGAKHAT ITF","D/P","P1010","ENGINE","Greaves","TBD3 V6 II"],["TENGAKHAT ITF","D/P","P1011","ENGINE","Greaves","TBD3 V6 II"],["TENGAKHAT ITF","D/P","P1012","ENGINE","Greaves","TBD3 V6 II"],["TENGAKHAT ITF","D/P","P1013","ENGINE","Greaves","TBD3 V6 II"],["TENGAKHAT ITF","D/P","P104","ENGINE","Greaves","TBD3 V6 II"],["TENGAKHAT ITF","D/P","P105","ENGINE","Greaves","TBD3 V6 II"],["TENGAKHAT ITF","D/P","P106","ENGINE","Greaves","TBD3 V6 II"],["TENGAKHAT ITF","D/P","P107","ENGINE","Kirloskar","6SL9088TA"],["TENGAKHAT ITF","D/P","P108","ENGINE","Kirloskar","6SL9088TA"],["TENGAKHAT ITF","D/P","P109","ENGINE","Kirloskar","6SL9088TA"],["TENGAKHAT ITF","P/H","1","ENGINE","MWM","TCG 2020 V20"],["TENGAKHAT ITF","P/H","2","ENGINE","MWM","TCG 2020 V20"],["TENGAKHAT ITF","P/H","3","ENGINE","MWM","TCG 2020 V20"],["TENGAKHAT ITF","P/H","4","ENGINE","Cummins","QSB 5.9-G1"],["TENGAKHAT OCS","CODP","1","CLUTCH","Caterpillar",""],["TENGAKHAT OCS","CODP","1","ENGINE","Cummins","G 855 P"],["TENGAKHAT OCS","CODP","1","PUMP","BPCL","83-20R"],["TENGAKHAT OCS","RECYCLING PUMP (RECHARGING)","1","PUMP","ROTO FLOW","RMAB581-J7CD5D"],["TENGAKHAT OCS","RECYCLING PUMP (RECHARGING)","2","PUMP","ROTO FLOW","RMAB581-J7CD5D"],["TENGAKHAT OCS","SUMP PUMP","1","CLUTCH","GHATGE PATIL","GP1100CP"],["TENGAKHAT OCS","SUMP PUMP","1","ENGINE","Kirloskar","HA495TC"],["USHAPUR OCS","CODP","1","BOOSTER PUMP","NOV",""],["USHAPUR OCS","CODP","1","CLUTCH","GHATGE PATEL","GP2140SP"],["USHAPUR OCS","CODP","1","ENGINE","CUMMINS","G-855"],["USHAPUR OCS","CODP","1","PUMP","BPCL","63-10R"],["USHAPUR OCS","CODP","2","CLUTCH","CATERPILLAR","IBF-314P1"],["USHAPUR OCS","CODP","2","ENGINE","CATERPILLAR","G3406"],["USHAPUR OCS","CODP","2","GEARBOX","PREMIUM","H1-225"],["USHAPUR OCS","CODP","2","PUMP","NOV","BD-150SL"],["USHAPUR OCS","D/P","1","CLUTCH","GHATGE PATEL","SP214P1"],["USHAPUR OCS","D/P","1","ENGINE","CUMMINS","NT-743-F1"],["USHAPUR OCS","D/P","2","CLUTCH","GHATGE PATEL","SP214P1"],["USHAPUR OCS","D/P","2","ENGINE","CUMMINS","NT-743-P"],["USHAPUR OCS","P/H","1","ENGINE","CUMMINS","G-855-BC"],["USHAPUR OCS","P/H","2","ENGINE","CUMMINS","G-855-P"],["USHAPUR OCS","P/H","NEW (1)","ENGINE","GENERAC","G14.2L"],["USHAPUR OCS","P/H","NEW(2)","ENGINE","GENERAC","G14.2L"],["W/I -21","P/H","1","ENGINE","GREAVES","3G11TAG25"],["W/I -21","W/I PUMP","1","ENGINE","MOTOR DRIVEN",""],["W/I -21","W/I PUMP","1","GEARBOX","SHANTHI","HIN280"],["W/I -21","W/I PUMP","1","PUMP","HYDRA-CELL","Q155HDDGNNTTBX"],["W/I -21","W/I PUMP","2","ENGINE","MOTOR DRIVEN",""],["W/I -21","W/I PUMP","2","GEARBOX","SHANTHI","HIN280"],["W/I -21","W/I PUMP","2","PUMP","HYDRA-CELL","Q155HDDGNNTTBX"],["W/I -21","W/I PUMP","3","ENGINE","MOTOR DRIVEN",""],["W/I -21","W/I PUMP","3","GEARBOX","SHANTHI","HIN280"],["W/I -21","W/I PUMP","3","PUMP","HYDRA-CELL","Q155HDDGNNTTBX"],["W/I -21","W/I PUMP","4","ENGINE","MOTOR DRIVEN",""],["W/I -21","W/I PUMP","4","GEARBOX","SHANTHI","HIN280"],["W/I -21","W/I PUMP","4","PUMP","HYDRA-CELL","Q155HDDGNNTTBX"],["W/I#208","W/I PUMP","1","ENGINE","MOTOR DRIVEN",""],["W/I#208","W/I PUMP","1","GEARBOX","PREMIUM",""],["W/I#208","W/I PUMP","1","PUMP","BPCL","63-10R"],["W/I#208","W/I PUMP","2","ENGINE","MOTOR DRIVEN",""],["W/I#208","W/I PUMP","2","GEARBOX","FMG","ETLN360"],["W/I#208","W/I PUMP","2","PUMP","BPCL","A-336(63-10R)"],["W/I#208","W/I PUMP","3","ENGINE","MOTOR DRIVEN",""],["W/I#208","W/I PUMP","3","GEARBOX","FMG","ETLN360"],["W/I#208","W/I PUMP","3","PUMP","BPCL","A336(63-10R)"],["W/I#208","W/I PUMP","5","ENGINE","MOTOR DRIVEN",""],["W/I#208","W/I PUMP","5","GEARBOX","FMG","ETLW 360"],["W/I#208","W/I PUMP","5","PUMP","BPCL","A336(63-10R)"],["W/I#208","W/I PUMP","6","ENGINE","MOTOR DRIVEN",""],["W/I#208","W/I PUMP","6","GEARBOX","FMG","ETLW 360"],["W/I#208","W/I PUMP","6","PUMP","BPCL","A336(63-10R)"],["W/I#254","W/I PUMP","1","ENGINE","MOTOR DRIVEN",""],["W/I#254","W/I PUMP","1","GEARBOX","HELIMAX","CSA-225"],["W/I#254","W/I PUMP","1","PUMP","BPCL","A-336"],["W/I#254","W/I PUMP","2","ENGINE","MOTOR DRIVEN",""],["W/I#254","W/I PUMP","2","GEARBOX","HELIMAX","CSA-225"],["W/I#254","W/I PUMP","2","PUMP","BPCL","A-336"],["W/I#254","W/I PUMP","3","CLUTCH","GHATGE PATEL","GP-2140SP"],["W/I#254","W/I PUMP","3","ENGINE","CUMMINS","G-855-P"],["W/I#254","W/I PUMP","3","GEARBOX","PREMIUM","H1-200"],["W/I#254","W/I PUMP","3","PUMP","BPCL","A-336(63-10R)"],["W/I-GCS-6","P/H","1","ENGINE","GREAVES","3G11TAG25"],["W/I-GCS-6","W/I PUMP","1","GEARBOX","SHANTHI","HIN-280"],["W/I-GCS-6","W/I PUMP","1","PUMP","HYDRA-CELL","Q155H*GG****BW"],["W/I-GCS-6","W/I PUMP","2","GEARBOX","SHANTHI","HIN-280"],["W/I-GCS-6","W/I PUMP","2","PUMP","HYDRA-CELL","Q155HDDGNTTB"],["W/I-GCS-6","W/I PUMP","3","GEARBOX","SHANTHI","HIN-280"],["W/I-GCS-6","W/I PUMP","3","PUMP","HYDRA-CELL","Q155HDDGNNTTBX"],["W/I-GCS-6","W/I PUMP","4","GEARBOX","SHANTHI","HIN-280"],["W/I-GCS-6","W/I PUMP","4","PUMP","HYDRA-CELL","Q155HDDGNNTTBX"],["WELL RONGMOLA #1","P/H","1","ENGINE","EICHER","422TC"],["WELL#537","P/H","1","ENGINE","KIRLOSKAR","HA394"],["WELL#637","P/H","1","ENGINE","ASHOK LEYLAND","AL6ENG 2/2"]];
+function defaultSettings(){
+  return {company:'Oil India Limited',dept:'Field Engineering',section:'ICE F&WI',title:'Preventive Maintenance Report',reportPrefix:'ICE-F',techCode:'',logo:BUILTIN_LOGO};
+}
+function loadSettings(){
+  const stored=JSON.parse(localStorage.getItem('pm_settings')||'null');
+  const s=Object.assign(defaultSettings(),stored||{});
+  document.getElementById('setCompany').value=s.company;
+  document.getElementById('setDept').value=s.dept;
+  document.getElementById('setSection').value=s.section;
+  document.getElementById('setTitle').value=s.title;
+  document.getElementById('setReportPrefix').value=s.reportPrefix;
+  document.getElementById('setTechCode').value=s.techCode;
+  applyHeaderDisplay(s);
+  return s;
+}
+function applyHeaderDisplay(s){
+  document.getElementById('companyNameHeader').textContent=s.company||'';
+  document.getElementById('deptHeader').innerHTML=`${s.dept||''}${s.dept&&s.section?'<br>':''}${s.section||''}`;
+  const wrap=document.getElementById('headerRight');
+  let img=document.getElementById('headerLogoImg');
+  if(s.logo){
+    if(!img){
+      img=document.createElement('img');
+      img.id='headerLogoImg';
+      wrap.insertBefore(img,wrap.firstChild);
+    }
+    img.src=s.logo;
+  }else if(img){
+    img.remove();
+  }
+  const lp=document.getElementById('logoPreviewWrap');
+  const lpImg=document.getElementById('logoPreview');
+  if(s.logo){ lp.style.display='flex'; lpImg.src=s.logo; }
+  else{ lp.style.display='none'; }
+}
+let pendingLogoDataUrl=undefined; // undefined = no change, null = removed, string = new
+document.getElementById('setLogo').addEventListener('change',e=>{
+  const f=e.target.files[0];
+  if(!f) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    pendingLogoDataUrl=ev.target.result;
+    document.getElementById('logoPreviewWrap').style.display='flex';
+    document.getElementById('logoPreview').src=pendingLogoDataUrl;
+  };
+  reader.readAsDataURL(f);
+});
+document.getElementById('btnRemoveLogo').addEventListener('click',()=>{
+  pendingLogoDataUrl=null;
+  document.getElementById('logoPreviewWrap').style.display='none';
+  document.getElementById('setLogo').value='';
+});
+function saveSettingsFromForm(){
+  const prev=Object.assign(defaultSettings(),JSON.parse(localStorage.getItem('pm_settings')||'null')||{});
+  const s={
+    company:document.getElementById('setCompany').value.trim()||defaultSettings().company,
+    dept:document.getElementById('setDept').value.trim(),
+    section:document.getElementById('setSection').value.trim(),
+    title:document.getElementById('setTitle').value.trim()||'Preventive Maintenance Report',
+    reportPrefix:document.getElementById('setReportPrefix').value.trim()||'ICE-F',
+    techCode:document.getElementById('setTechCode').value.trim(),
+    logo: pendingLogoDataUrl!==undefined ? pendingLogoDataUrl : prev.logo
+  };
+  localStorage.setItem('pm_settings',JSON.stringify(s));
+  pendingLogoDataUrl=undefined;
+  applyHeaderDisplay(s);
+  toast('Settings saved');
+}
+
+function loadSectionToggles(){
+  const stored=JSON.parse(localStorage.getItem('pm_section_toggles')||'null');
+  const defaults={};
+  DEFAULT_SECTIONS.forEach(s=>{ defaults[s.key]=true; });
+  return Object.assign(defaults,stored||{});
+}
+function saveSectionToggles(t){ localStorage.setItem('pm_section_toggles',JSON.stringify(t)); }
+function loadCustomItems(){
+  const t=JSON.parse(localStorage.getItem('pm_custom_items')||'null');
+  return t && t.length ? t : [];
+}
+function saveCustomItemsList(list){ localStorage.setItem('pm_custom_items',JSON.stringify(list)); }
+
+/* ================= Checklist (New Report) ================= */
+const PROFILE_SECTIONS={
+  phOnly:['engine','magtronic'],
+  full:['engine','magtronic','pump','coupling','clutch']
+};
+function getEquipmentProfile(){
+  const name=(document.getElementById('fEquipType').value||'').toUpperCase().trim();
+  if(name==='P/H'||name==='PH'||name.includes('POWERHOUSE')||name.includes('POWER HOUSE')) return 'phOnly';
+  return 'full';
+}
+function updateEquipmentDependentUI(){
+  const profile=getEquipmentProfile();
+  const isFull=profile==='full';
+  document.getElementById('pumpBlockWrap').style.display=isFull?'':'none';
+  document.getElementById('couplingTypeWrap').style.display=isFull?'':'none';
+  initChecklist();
+}
+function initChecklist(){
+  const toggles=loadSectionToggles();
+  const customItems=loadCustomItems();
+  const allowed=PROFILE_SECTIONS[getEquipmentProfile()];
+  let checklist=[];
+  DEFAULT_SECTIONS.forEach(sec=>{
+    if(!allowed.includes(sec.key)) return;
+    if(toggles[sec.key]===false) return;
+    sec.items.forEach(it=>{
+      checklist.push({section:sec.name,q:it.q,status:null,options:it.options||OPTS_YESNO,extra:(it.extra||[]).map(label=>({label,value:''}))});
+    });
+  });
+  customItems.forEach(q=>{
+    checklist.push({section:'Additional / Site-Specific',q,status:null,options:OPTS_YESNO,extra:[]});
+  });
+  state.checklist=checklist;
+  renderChecklist();
+}
+function renderChecklist(){
+  const wrap=document.getElementById('checklistWrap');
+  wrap.innerHTML='';
+  let lastSection=null, counter=0;
+  state.checklist.forEach((item,idx)=>{
+    if(item.section!==lastSection){
+      lastSection=item.section; counter=0;
+      const h=document.createElement('div');
+      h.className='checklist-section-h';
+      h.textContent=item.section;
+      wrap.appendChild(h);
+    }
+    counter++;
+    const div=document.createElement('div');
+    div.className='checklist-item';
+    let extraHtml='';
+    if(item.extra&&item.extra.length){
+      extraHtml='<div class="checklist-extra">'+item.extra.map((e,ei)=>
+        `<input type="text" placeholder="${e.label}" data-idx="${idx}" data-ei="${ei}" value="${String(e.value||'').replace(/"/g,'&quot;')}">`
+      ).join('')+'</div>';
+    }
+    const opts=item.options||OPTS_YESNO;
+    const segHtml=opts.map(o=>{
+      const cls=o.color==='good'?'sel-yes':(o.color==='bad'?'sel-no':'sel-na');
+      const on=item.status===o.value?'on':'';
+      return `<button type="button" class="${cls} ${on}" data-idx="${idx}" data-val="${o.value}">${o.label.toUpperCase()}</button>`;
+    }).join('');
+    div.innerHTML=`
+      <div class="q">${counter}. ${item.q}</div>
+      <div class="seg">${segHtml}</div>
+      ${extraHtml}
+    `;
+    wrap.appendChild(div);
+  });
+  wrap.querySelectorAll('.seg button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const idx=+btn.dataset.idx, val=btn.dataset.val;
+      state.checklist[idx].status = state.checklist[idx].status===val ? null : val;
+      renderChecklist();
+    });
+  });
+  wrap.querySelectorAll('.checklist-extra input').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      state.checklist[+inp.dataset.idx].extra[+inp.dataset.ei].value=inp.value;
+    });
+  });
+}
+document.getElementById('btnAddCheck').addEventListener('click',()=>{
+  const q=prompt('Enter custom check item:');
+  if(q&&q.trim()){ state.checklist.push({section:'Additional (this report)',q:q.trim(),status:null,options:OPTS_YESNO,extra:[]}); renderChecklist(); }
+});
+
+/* ================= Additional Details (dynamic key/value) ================= */
+function renderExtras(){
+  const wrap=document.getElementById('extraWrap');
+  wrap.innerHTML='';
+  state.extras.forEach((row,idx)=>{
+    const div=document.createElement('div');
+    div.className='extra-row';
+    div.innerHTML=`
+      <input type="text" placeholder="Point (e.g. LO Grade)" value="${(row.label||'').replace(/"/g,'&quot;')}" data-field="label" data-idx="${idx}">
+      <input type="text" placeholder="Value (e.g. 15W-40)" value="${(row.value||'').replace(/"/g,'&quot;')}" data-field="value" data-idx="${idx}">
+      <button type="button" class="rmx" data-rmx="${idx}">✕</button>
+    `;
+    wrap.appendChild(div);
+  });
+  wrap.querySelectorAll('input[data-field]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      state.extras[+inp.dataset.idx][inp.dataset.field]=inp.value;
+    });
+  });
+  wrap.querySelectorAll('[data-rmx]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      state.extras.splice(+b.dataset.rmx,1);
+      renderExtras();
+    });
+  });
+}
+document.getElementById('btnAddExtra').addEventListener('click',()=>{
+  state.extras.push({label:'',value:''});
+  renderExtras();
+});
+
+/* ================= Equipment Catalog Cascade ================= */
+function uniqueSorted(arr){ return Array.from(new Set(arr.filter(v=>v!==undefined&&v!==null&&v!==''))).sort((a,b)=>a.localeCompare(b)); }
+function getCatalogSites(){ return uniqueSorted(EQUIP_DATA.map(r=>r[0])); }
+function getCatalogEquips(site){ return uniqueSorted(EQUIP_DATA.filter(r=>r[0]===site).map(r=>r[1])); }
+const ENGINE_TYPES=['ENGINE'];
+const PUMP_TYPES=['PUMP','BOOSTER PUMP','ROTO PUMP','BOOSTER PUMP MOTOR'];
+// EQUIP_DATA rows: [site, equipment, unitNo, componentType, make, model] — unit no is ignored here; Unit No. is a free-text field
+function getCatalogMakesByType(site,equip,typeList){
+  return uniqueSorted(EQUIP_DATA.filter(r=>r[0]===site&&r[1]===equip&&typeList.includes(r[3])).map(r=>r[4]));
+}
+function getCatalogModelsByType(site,equip,typeList,make){
+  return uniqueSorted(EQUIP_DATA.filter(r=>r[0]===site&&r[1]===equip&&typeList.includes(r[3])&&r[4]===make).map(r=>r[5]));
+}
+
+function resetCascadeSelect(id,placeholder){
+  const sel=document.getElementById(id);
+  sel.innerHTML='<option value="">'+placeholder+'</option>';
+  sel.disabled=true;
+}
+function populateCascadeSelect(id,items,placeholder,includeManual){
+  const sel=document.getElementById(id);
+  let html='<option value="">'+placeholder+'</option>';
+  items.forEach(v=>{
+    const esc=String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+    html+='<option value="'+esc+'">'+esc+'</option>';
+  });
+  if(includeManual) html+='<option value="__manual__">✎ Not listed / Enter manually</option>';
+  sel.innerHTML=html;
+  sel.disabled=false;
+}
+function initCatalogUI(){
+  populateCascadeSelect('fSiteSelect',getCatalogSites(),'— Select installation —',true);
+}
+function resetComponentPickers(){
+  resetCascadeSelect('fEngineMakeSelect','— Select equipment first —');
+  resetCascadeSelect('fEngineModelSelect','— Select make first —');
+  resetCascadeSelect('fPumpMakeSelect','— Select equipment first —');
+  resetCascadeSelect('fPumpModelSelect','— Select make first —');
+  document.getElementById('fEngineMake').value='';
+  document.getElementById('fEngineModel').value='';
+  document.getElementById('fPumpMake').value='';
+  document.getElementById('fPumpModel').value='';
+}
+
+document.getElementById('fSiteSelect').addEventListener('change',()=>{
+  const v=document.getElementById('fSiteSelect').value;
+  resetComponentPickers();
+  document.getElementById('fEquipType').value='';
+  document.getElementById('fEquipTypeManual').value='';
+  document.getElementById('fEquipTypeManualWrap').classList.add('hidden');
+  if(v==='__manual__'){
+    document.getElementById('fSite').value='';
+    document.getElementById('fSite').focus();
+    resetCascadeSelect('fEquipTypeSelect','— Select installation first —');
+    return;
+  }
+  if(!v){ resetCascadeSelect('fEquipTypeSelect','— Select installation first —'); return; }
+  document.getElementById('fSite').value=v;
+  populateCascadeSelect('fEquipTypeSelect',getCatalogEquips(v),'— Select equipment —',true);
+});
+
+document.getElementById('fEquipTypeSelect').addEventListener('change',()=>{
+  const site=document.getElementById('fSite').value;
+  const v=document.getElementById('fEquipTypeSelect').value;
+  const manualWrap=document.getElementById('fEquipTypeManualWrap');
+  resetComponentPickers();
+  if(v==='__manual__'){
+    manualWrap.classList.remove('hidden');
+    document.getElementById('fEquipTypeManual').focus();
+    document.getElementById('fEquipType').value='';
+    updateEquipmentDependentUI();
+    return;
+  }
+  manualWrap.classList.add('hidden');
+  document.getElementById('fEquipTypeManual').value='';
+  if(!v){ document.getElementById('fEquipType').value=''; updateEquipmentDependentUI(); return; }
+  document.getElementById('fEquipType').value=v;
+  populateCascadeSelect('fEngineMakeSelect',getCatalogMakesByType(site,v,ENGINE_TYPES),'— Select make —',false);
+  populateCascadeSelect('fPumpMakeSelect',getCatalogMakesByType(site,v,PUMP_TYPES),'— Select make —',false);
+  updateEquipmentDependentUI();
+});
+document.getElementById('fEquipTypeManual').addEventListener('input',()=>{
+  document.getElementById('fEquipType').value=document.getElementById('fEquipTypeManual').value.trim();
+  updateEquipmentDependentUI();
+});
+
+function wireComponentPicker(makeSelId,modelSelId,makeInputId,modelInputId,typeList){
+  document.getElementById(makeSelId).addEventListener('change',()=>{
+    const site=document.getElementById('fSite').value;
+    const equip=document.getElementById('fEquipType').value;
+    const v=document.getElementById(makeSelId).value;
+    document.getElementById(modelInputId).value='';
+    if(!v){ resetCascadeSelect(modelSelId,'— Select make first —'); return; }
+    document.getElementById(makeInputId).value=v;
+    const models=getCatalogModelsByType(site,equip,typeList,v);
+    if(models.length){ populateCascadeSelect(modelSelId,models,'— Select model (optional) —',false); }
+    else{ resetCascadeSelect(modelSelId,'— No catalog models — type below —'); }
+  });
+  document.getElementById(modelSelId).addEventListener('change',()=>{
+    const v=document.getElementById(modelSelId).value;
+    if(v) document.getElementById(modelInputId).value=v;
+  });
+}
+wireComponentPicker('fEngineMakeSelect','fEngineModelSelect','fEngineMake','fEngineModel',ENGINE_TYPES);
+wireComponentPicker('fPumpMakeSelect','fPumpModelSelect','fPumpMake','fPumpModel',PUMP_TYPES);
+
+document.getElementById('fSite').addEventListener('input',()=>{
+  const sel=document.getElementById('fSiteSelect');
+  const val=document.getElementById('fSite').value;
+  const match=Array.from(sel.options).some(o=>o.value===val);
+  if(!match) sel.selectedIndex=0;
+});
+
+/* ================= GPS ================= */
+function captureGPS(){
+  const box=document.getElementById('gpsBox');
+  if(!navigator.geolocation){ box.textContent='Geolocation not supported on this device.'; return; }
+  box.textContent='Capturing location...'; box.classList.add('pending');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    state.gps={
+      lat:pos.coords.latitude.toFixed(6),
+      lon:pos.coords.longitude.toFixed(6),
+      acc:Math.round(pos.coords.accuracy)
+    };
+    box.classList.remove('pending');
+    box.innerHTML=`<span class="gps-ok">✓ Captured</span><br>Lat: ${state.gps.lat} &nbsp; Lon: ${state.gps.lon} &nbsp; (±${state.gps.acc}m)`;
+  },err=>{
+    box.classList.remove('pending');
+    box.textContent='Could not get location automatically: '+err.message+'. Tap "Capture GPS Location" to retry, or check that Location permission is enabled for this app.';
+  },{enableHighAccuracy:true,timeout:15000});
+}
+document.getElementById('btnGps').addEventListener('click',captureGPS);
+
+/* ================= Photos (categorized) ================= */
+let activeCat='before';
+document.querySelectorAll('.add-photo').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    activeCat=btn.dataset.cat;
+    document.getElementById('photoInput').click();
+  });
+});
+document.getElementById('photoInput').addEventListener('change',async e=>{
+  const files=Array.from(e.target.files||[]);
+  for(const f of files){
+    const dataUrl=await compressImage(f,1000,0.7);
+    state.photos[activeCat].push({id:uid(),dataUrl});
+  }
+  e.target.value='';
+  renderPhotos(activeCat);
+});
+function compressImage(file,maxDim,quality){
+  return new Promise(resolve=>{
+    const img=new Image();
+    const reader=new FileReader();
+    reader.onload=ev=>{img.src=ev.target.result;};
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>h && w>maxDim){h=h*maxDim/w;w=maxDim;}
+      else if(h>maxDim){w=w*maxDim/h;h=maxDim;}
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      resolve(c.toDataURL('image/jpeg',quality));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderPhotos(cat){
+  const cats = cat ? [cat] : PHOTO_CATS;
+  cats.forEach(c=>{
+    const grid=document.getElementById('grid-'+c);
+    grid.querySelectorAll('.ph').forEach(el=>el.remove());
+    const addBtn=grid.querySelector('.add-photo');
+    state.photos[c].forEach(p=>{
+      const d=document.createElement('div');
+      d.className='ph';
+      d.innerHTML=`<img src="${p.dataUrl}"><button class="rm" data-id="${p.id}" data-cat="${c}">✕</button>`;
+      grid.insertBefore(d,addBtn);
+    });
+    grid.querySelectorAll('.rm').forEach(b=>{
+      b.addEventListener('click',()=>{
+        state.photos[b.dataset.cat]=state.photos[b.dataset.cat].filter(p=>p.id!==b.dataset.id);
+        renderPhotos(b.dataset.cat);
+      });
+    });
+  });
+}
+
+/* ================= Reset form for new report ================= */
+function resetForm(){
+  state.gps=null;
+  state.photos={before:[],after:[],general:[]};
+  state.extras=[];
+  document.getElementById('gpsBox').textContent='No location captured yet.';
+  document.getElementById('gpsBox').classList.add('pending');
+  const now=new Date();
+  document.getElementById('fDate').value=now.toISOString().slice(0,10);
+  document.getElementById('fTime').value=now.toTimeString().slice(0,5);
+  document.getElementById('fSite').value='';
+  document.getElementById('fUnitNo').value='';
+  document.getElementById('fEngineMake').value='';
+  document.getElementById('fEngineModel').value='';
+  document.getElementById('fEngineSerial').value='';
+  document.getElementById('fEngineRunHours').value='';
+  document.getElementById('fPumpMake').value='';
+  document.getElementById('fPumpModel').value='';
+  document.getElementById('fPumpSerial').value='';
+  document.getElementById('fPlungerSize').value='';
+  document.getElementById('fPumpRunHours').value='';
+  document.getElementById('fCouplingType').value='';
+  document.getElementById('fLoPressure').value='';
+  document.getElementById('fLoTemp').value='';
+  document.getElementById('fWaterTemp').value='';
+  document.getElementById('fAmpMeter').value='';
+  document.getElementById('fInspector').value='';
+  document.getElementById('fRemarks').value='';
+  document.getElementById('fEquipType').value='';
+  document.getElementById('fEquipTypeManual').value='';
+  document.getElementById('fEquipTypeManualWrap').classList.add('hidden');
+  document.getElementById('fSiteSelect').selectedIndex=0;
+  resetCascadeSelect('fEquipTypeSelect','— Select installation first —');
+  resetComponentPickers();
+  renderPhotos();
+  renderExtras();
+  updateEquipmentDependentUI();
+  captureGPS();
+}
+
+/* ================= PDF Generation ================= */
+async function generatePDF(reportData){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'pt',format:'a4'});
+  const pageW=doc.internal.pageSize.getWidth();
+  const pageH=doc.internal.pageSize.getHeight();
+  const margin=42;
+  const contentBottom=pageH-46; // reserved zone at the very bottom for the footer rule + text
+  const settings=Object.assign(defaultSettings(),JSON.parse(localStorage.getItem('pm_settings')||'null')||{});
+  const INK=[16,23,31], STEEL=[31,42,54], SAFETY=[214,90,31], MUTED=[107,118,132], LINE=[221,225,229];
+
+  let y=0;
+
+  // ---- Ensures there is room for `needed` pt of content; adds a new page if not ----
+  function ensureSpace(needed){
+    if(y+needed>contentBottom){ doc.addPage(); y=56; return true; }
+    return false;
+  }
+
+  // ---- Letterhead header band (page 1 only), sized in two passes so nothing overlaps ----
+  async function drawHeaderBand(){
+    const padTop=20, padBottom=16, gap=8;
+    const rightX=pageW-margin;
+    const rightColW=130;
+    const titleMaxW=pageW-margin*2-rightColW-16;
+
+    // -- Pass 1: measure --
+    let logoW=0, logoH=0;
+    if(settings.logo){
+      try{
+        const dim=await getImageDims(settings.logo);
+        const targetH=54;
+        logoH=targetH; logoW=dim.w*(targetH/dim.h);
+        if(logoW>rightColW-10){ logoW=rightColW-10; logoH=dim.h*(logoW/dim.w); }
+      }catch(e){ logoW=0; logoH=0; }
+    }
+    doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    const companyLines=settings.company?doc.splitTextToSize(settings.company,rightColW):[];
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+    const deptLines=settings.dept?doc.splitTextToSize(settings.dept,rightColW):[];
+    const sectionLines=settings.section?doc.splitTextToSize(settings.section,rightColW):[];
+    const rightTextH=companyLines.length*12+deptLines.length*10+sectionLines.length*10;
+    const rightColH=(logoH?logoH+10:0)+rightTextH;
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(19);
+    const titleLines=doc.splitTextToSize(settings.title||'Preventive Maintenance Report',titleMaxW);
+    const leftColH=10+titleLines.length*20+14;
+
+    const bandH=Math.max(leftColH,rightColH)+padTop+padBottom;
+
+    // -- Pass 2: draw --
+    doc.setFillColor(...STEEL);
+    doc.rect(0,0,pageW,bandH,'F');
+    doc.setFillColor(...SAFETY);
+    doc.rect(0,bandH,pageW,3,'F');
+
+    let ry=padTop;
+    if(logoW){
+      const plateW=logoW+10, plateH=logoH+8;
+      doc.setFillColor(255,255,255);
+      doc.roundedRect(rightX-plateW,ry,plateW,plateH,3,3,'F');
+      try{ doc.addImage(settings.logo,'PNG',rightX-plateW+5,ry+4,logoW,logoH); }catch(e){}
+      ry+=plateH+10;
+    }
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    companyLines.forEach(l=>{ doc.text(l,rightX,ry,{align:'right'}); ry+=12; });
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+    doc.setTextColor(198,206,215);
+    deptLines.concat(sectionLines).forEach(l=>{ doc.text(l,rightX,ry,{align:'right'}); ry+=10; });
+
+    doc.setTextColor(214,90,31);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+    doc.text('PREVENTIVE MAINTENANCE — FIELD REPORT',margin,padTop+8);
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold'); doc.setFontSize(19);
+    let ly=padTop+30;
+    titleLines.forEach(l=>{ doc.text(l,margin,ly); ly+=20; });
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    doc.setTextColor(255,220,200);
+    doc.text(`Report No: ${reportData.reportNo||'-'}`,margin,ly+2);
+
+    doc.setTextColor(...INK);
+    y=bandH+30;
+  }
+  await drawHeaderBand();
+
+  // ---- Two-column meta / info block ----
+  const colGap=24;
+  const colW=(pageW-margin*2-colGap)/2;
+  const colBX=margin+colW+colGap;
+
+  function fieldRow(x,yy,width,label,val){
+    doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.setTextColor(...MUTED);
+    doc.text(label.toUpperCase(),x,yy);
+    doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(...INK);
+    const lines=doc.splitTextToSize(String(val||'-'),width);
+    doc.text(lines,x,yy+13);
+    return yy+13+lines.length*13+10;
+  }
+
+  ensureSpace(310);
+  let yA=y, yB=y;
+  yA=fieldRow(margin,yA,colW,'Date',reportData.date);
+  yA=fieldRow(margin,yA,colW,'Time',reportData.time);
+  yA=fieldRow(margin,yA,colW,'Installation / Site',reportData.site);
+  yA=fieldRow(margin,yA,colW,'Unit No.',reportData.unitNo);
+  yA=fieldRow(margin,yA,colW,'Equipment',reportData.equipType);
+  yA=fieldRow(margin,yA,colW,'Inspecting Technician',reportData.inspector);
+
+  yB=fieldRow(colBX,yB,colW,'Engine Make / Model',`${reportData.engineMake||'-'} / ${reportData.engineModel||'-'}`);
+  yB=fieldRow(colBX,yB,colW,'Engine Sl. No.',reportData.engineSerial);
+  yB=fieldRow(colBX,yB,colW,'Engine Run Hours',reportData.engineRunHours);
+  const hasPumpInfo=reportData.pumpMake||reportData.pumpModel||reportData.pumpSerial||reportData.plungerSize||reportData.pumpRunHours;
+  if(hasPumpInfo){
+    yB=fieldRow(colBX,yB,colW,'Pump Make / Model',`${reportData.pumpMake||'-'} / ${reportData.pumpModel||'-'}`);
+    yB=fieldRow(colBX,yB,colW,'Pump Sl. No.',reportData.pumpSerial);
+    yB=fieldRow(colBX,yB,colW,'Plunger Size',reportData.plungerSize);
+    yB=fieldRow(colBX,yB,colW,'Pump Run Hours',reportData.pumpRunHours);
+  }
+  y=Math.max(yA,yB);
+
+  if(reportData.gps){
+    ensureSpace(30);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.setTextColor(...MUTED);
+    doc.text('GPS COORDINATES',margin,y);
+    doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(...INK);
+    doc.text(`${reportData.gps.lat}, ${reportData.gps.lon}  (±${reportData.gps.acc}m)`,margin,y+13);
+    const mapUrl=`https://maps.google.com/?q=${reportData.gps.lat},${reportData.gps.lon}`;
+    doc.setTextColor(30,80,190); doc.setFontSize(9.5);
+    doc.textWithLink('View in Google Map',margin+260,y+13,{url:mapUrl});
+    doc.setTextColor(...INK);
+    y+=32;
+  }
+
+  doc.setDrawColor(...LINE); doc.setLineWidth(0.7);
+  doc.line(margin,y,pageW-margin,y); y+=22;
+
+  // ---- Section heading helper ----
+  function sectionHeading(title){
+    ensureSpace(26);
+    doc.setFillColor(...SAFETY);
+    doc.rect(margin,y-9,3,12,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(11.5); doc.setTextColor(...INK);
+    doc.text(title.toUpperCase(),margin+9,y);
+    y+=18;
+  }
+
+  // ---- Coupling Type ----
+  if(reportData.couplingType){
+    sectionHeading('Coupling Details');
+    doc.setFont('helvetica','bold'); doc.setFontSize(9.5); doc.setTextColor(...MUTED);
+    doc.text('TYPE OF COUPLING',margin,y);
+    doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(...INK);
+    doc.text(reportData.couplingType,margin+130,y);
+    y+=22;
+  }
+
+  // ---- Checklist (grouped by section, with inline extra readings) ----
+  let lastChecklistSection=null;
+  reportData.checklist.forEach((item,i)=>{
+    if(item.section!==lastChecklistSection){
+      lastChecklistSection=item.section;
+      y+=6;
+      sectionHeading(item.section);
+      doc.setFontSize(10.5);
+    }
+    const filledExtras=(item.extra||[]).filter(e=>e.value&&e.value.trim());
+    const extraLine=filledExtras.length?filledExtras.map(e=>`${e.label}: ${e.value}`).join('   ·   '):'';
+    const qLines=doc.splitTextToSize(item.q,pageW-margin*2-72);
+    const extraLines=extraLine?doc.splitTextToSize(extraLine,pageW-margin*2-16):[];
+    const rowH=extraLines.length
+      ? 18+qLines.length*13+extraLines.length*11
+      : Math.max(18,qLines.length*13+6);
+    const newPage=ensureSpace(rowH);
+    if(newPage){ doc.setFontSize(10.5); }
+    doc.setFillColor(i%2===0?250:245,i%2===0?250:246,i%2===0?251:247);
+    doc.rect(margin-4,y-11,pageW-margin*2+8,rowH,'F');
+    const opts=item.options||OPTS_YESNO;
+    const selectedOpt=opts.find(o=>o.value===item.status);
+    const statusLabel=selectedOpt?selectedOpt.label.toUpperCase():'-';
+    doc.setFont('helvetica','normal'); doc.setTextColor(...INK);
+    doc.text(qLines,margin,y);
+    doc.setFont('helvetica','bold');
+    if(selectedOpt&&selectedOpt.color==='good') doc.setTextColor(47,125,79);
+    else if(selectedOpt&&selectedOpt.color==='bad') doc.setTextColor(192,57,43);
+    else doc.setTextColor(...MUTED);
+    doc.text(statusLabel,pageW-margin-4,y,{align:'right'});
+    doc.setTextColor(...INK);
+    if(extraLines.length){
+      doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(...MUTED);
+      doc.text(extraLines,margin,y+qLines.length*13+4);
+      doc.setFontSize(10.5); doc.setTextColor(...INK);
+    }
+    y+=rowH;
+  });
+
+  // ---- Instrument Panel Readings ----
+  const hasReadings=reportData.loPressure||reportData.loTemp||reportData.waterTemp||reportData.ampMeter;
+  if(hasReadings){
+    y+=10;
+    sectionHeading('Instrument Panel Readings');
+    const readings=[['Lub Oil Pr.',reportData.loPressure],['Lub Oil Temp.',reportData.loTemp],['Water Temp.',reportData.waterTemp],['Amp. Meter',reportData.ampMeter]].filter(r=>r[1]);
+    const rw=(pageW-margin*2-24)/4;
+    ensureSpace(30);
+    readings.forEach((r,i)=>{
+      const rx=margin+i*(rw+8);
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...MUTED);
+      doc.text(r[0].toUpperCase(),rx,y);
+      doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(...INK);
+      doc.text(String(r[1]),rx,y+14);
+    });
+    y+=32;
+  }
+
+  // ---- Additional Details ----
+  const extras=(reportData.extras||[]).filter(x=>x.label && x.label.trim());
+  if(extras.length){
+    y+=10;
+    sectionHeading('Additional Details');
+    doc.setFontSize(10.5);
+    extras.forEach(ex=>{
+      const vLines=doc.splitTextToSize(String(ex.value||'-'),pageW-margin*2-150);
+      const rowH=Math.max(15,vLines.length*13);
+      ensureSpace(rowH);
+      doc.setFont('helvetica','bold'); doc.setTextColor(...INK);
+      doc.text(ex.label+':',margin,y);
+      doc.setFont('helvetica','normal');
+      doc.text(vLines,margin+150,y);
+      y+=rowH+4;
+    });
+  }
+
+  // ---- Remarks ----
+  y+=10;
+  sectionHeading('Remarks / Observations');
+  doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(...INK);
+  const remLines=doc.splitTextToSize(reportData.remarks||'-',pageW-margin*2);
+  ensureSpace(remLines.length*13+6);
+  doc.text(remLines,margin,y); y+=remLines.length*13+20;
+
+  // ---- Photos, grouped by category (aspect-preserving, framed) ----
+  const catList=[['before','Equipment Photo — Before'],['after','Equipment Photo — After'],['general','General Maintenance Photos']];
+  for(const [cat,label] of catList){
+    const photos=reportData.photos[cat]||[];
+    if(!photos.length) continue;
+    sectionHeading(label);
+    const gap=14;
+    const cellW=(pageW-margin*2-gap)/2, cellH=150;
+    let col=0;
+    for(const p of photos){
+      if(col===0) ensureSpace(cellH+gap);
+      const cx=margin+col*(cellW+gap);
+      doc.setDrawColor(...LINE); doc.setLineWidth(0.7);
+      doc.rect(cx,y,cellW,cellH);
+      try{
+        const dim=await getImageDims(p.dataUrl);
+        const scale=Math.min((cellW-8)/dim.w,(cellH-8)/dim.h);
+        const dw=dim.w*scale, dh=dim.h*scale;
+        const dx=cx+(cellW-dw)/2, dyImg=y+(cellH-dh)/2;
+        doc.addImage(p.dataUrl,'JPEG',dx,dyImg,dw,dh);
+      }catch(e){ /* skip unreadable image */ }
+      col++;
+      if(col===2){ col=0; y+=cellH+gap; }
+    }
+    if(col===1) y+=cellH+gap;
+    y+=6;
+  }
+
+  // ---- Signature block ----
+  ensureSpace(64);
+  y+=16;
+  doc.setDrawColor(...MUTED); doc.setLineWidth(0.7);
+  doc.line(margin,y,margin+220,y);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(...MUTED);
+  doc.text('Signature of Inspecting Technician (Headman)',margin,y+14);
+  doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.setTextColor(...INK);
+  doc.text(reportData.inspector||'Name',margin,y+29);
+
+  // ---- Footer on every page ----
+  const totalPages=doc.internal.getNumberOfPages();
+  const genLine=`Generated ${new Date().toLocaleString()} · ${settings.company||''}`;
+  for(let p=1;p<=totalPages;p++){
+    doc.setPage(p);
+    doc.setDrawColor(...LINE); doc.setLineWidth(0.5);
+    doc.line(margin,pageH-34,pageW-margin,pageH-34);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...MUTED);
+    doc.text(genLine,margin,pageH-22);
+    doc.text(`Page ${p} of ${totalPages}`,pageW-margin,pageH-22,{align:'right'});
+    doc.setFontSize(7); doc.setTextColor(160,166,173);
+    doc.text('Application developed by Saurav Kamal Medhi for Oil India Limited',pageW/2,pageH-10,{align:'center'});
+  }
+
+  return doc;
+}
+function getImageDims(dataUrl){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>res({w:img.width,h:img.height});
+    img.onerror=rej;
+    img.src=dataUrl;
+  });
+}
+
+/* ================= Generate & Save flow ================= */
+document.getElementById('btnGenerate').addEventListener('click',async ()=>{
+  const site=document.getElementById('fSite').value.trim();
+  if(!site){ toast('Please enter installation / site name'); return; }
+  const inspectorName=document.getElementById('fInspector').value.trim();
+  const settingsCheck=Object.assign(defaultSettings(),JSON.parse(localStorage.getItem('pm_settings')||'null')||{});
+  if(!inspectorName && !(settingsCheck.techCode||'').trim()){
+    toast('Enter the Name of Inspecting Technician first — used to number the report',3500);
+    document.getElementById('fInspector').focus();
+    return;
+  }
+  const genNow=new Date();
+  document.getElementById('fDate').value=genNow.toISOString().slice(0,10);
+  document.getElementById('fTime').value=genNow.toTimeString().slice(0,5);
+  const reportData={
+    id:uid(),
+    reportNo:nextReportNumber(document.getElementById('fEquipType').value,document.getElementById('fDate').value,inspectorName),
+    date:document.getElementById('fDate').value,
+    time:document.getElementById('fTime').value,
+    site,
+    unitNo:document.getElementById('fUnitNo').value.trim(),
+    equipType:document.getElementById('fEquipType').value,
+    engineMake:document.getElementById('fEngineMake').value.trim(),
+    engineModel:document.getElementById('fEngineModel').value.trim(),
+    engineSerial:document.getElementById('fEngineSerial').value.trim(),
+    engineRunHours:document.getElementById('fEngineRunHours').value.trim(),
+    pumpMake:document.getElementById('fPumpMake').value.trim(),
+    pumpModel:document.getElementById('fPumpModel').value.trim(),
+    pumpSerial:document.getElementById('fPumpSerial').value.trim(),
+    plungerSize:document.getElementById('fPlungerSize').value.trim(),
+    pumpRunHours:document.getElementById('fPumpRunHours').value.trim(),
+    couplingType:document.getElementById('fCouplingType').value.trim(),
+    loPressure:document.getElementById('fLoPressure').value.trim(),
+    loTemp:document.getElementById('fLoTemp').value.trim(),
+    waterTemp:document.getElementById('fWaterTemp').value.trim(),
+    ampMeter:document.getElementById('fAmpMeter').value.trim(),
+    inspector:document.getElementById('fInspector').value.trim(),
+    remarks:document.getElementById('fRemarks').value.trim(),
+    gps:state.gps,
+    checklist:JSON.parse(JSON.stringify(state.checklist)),
+    extras:JSON.parse(JSON.stringify(state.extras)),
+    photos:{
+      before:state.photos.before.map(p=>({dataUrl:p.dataUrl})),
+      after:state.photos.after.map(p=>({dataUrl:p.dataUrl})),
+      general:state.photos.general.map(p=>({dataUrl:p.dataUrl}))
+    },
+    createdAt:Date.now()
+  };
+  const btn=document.getElementById('btnGenerate');
+  btn.textContent='Generating...'; btn.disabled=true;
+  try{
+    const doc=await generatePDF(reportData);
+    const pdfBlob=doc.output('blob');
+    const pdfDataUrl=await blobToDataURL(pdfBlob);
+    reportData.pdfDataUrl=pdfDataUrl;
+    await dbPut('reports',reportData);
+    toast('Report saved. Opening share/download options...');
+    await sharePDF(pdfBlob,`PM_Report_${site.replace(/\s+/g,'_')}_${reportData.date}.pdf`);
+    resetForm();
+    switchView('saved');
+    renderSavedList();
+  }catch(e){
+    console.error(e);
+    toast('Error generating PDF: '+e.message);
+  }
+  btn.textContent='Generate PDF Report'; btn.disabled=false;
+});
+
+function blobToDataURL(blob){
+  return new Promise(res=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result);
+    r.readAsDataURL(blob);
+  });
+}
+
+async function sharePDF(blob,filename){
+  const file=new File([blob],filename,{type:'application/pdf'});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({files:[file],title:filename,text:'Preventive Maintenance Report'});
+      return;
+    }catch(e){ /* user cancelled or unsupported, fall through to download */ }
+  }
+  downloadBlob(blob,filename);
+  toast('PDF downloaded. Share it manually via WhatsApp from your Files/Downloads.',3500);
+}
+function downloadBlob(blob,filename){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+}
+
+/* ================= Saved Reports View ================= */
+async function renderSavedList(){
+  const list=document.getElementById('savedList');
+  const reports=(await dbGetAll('reports')).sort((a,b)=>b.createdAt-a.createdAt);
+  if(!reports.length){
+    list.innerHTML='<div class="empty-state">No saved reports yet.<br>Reports you generate will appear here.</div>';
+    return;
+  }
+  list.innerHTML='';
+  reports.forEach(r=>{
+    const div=document.createElement('div');
+    div.className='report-item';
+    div.innerHTML=`
+      <div class="title">${r.site}${r.equipType?` — ${r.equipType}`:''}</div>
+      <div class="meta">${r.reportNo?`<strong style="color:var(--ink);">${r.reportNo}</strong> · `:''}${r.date||''} ${r.time||''} ${r.engineMake?(' • '+r.engineMake+' '+(r.engineModel||'')):''}</div>
+      <div class="report-actions">
+        <button class="btn btn-dark btn-sm" data-act="share" data-id="${r.id}">Share PDF</button>
+        <button class="btn btn-outline btn-sm" data-act="download" data-id="${r.id}">Download</button>
+        <button class="btn btn-danger btn-sm" data-act="delete" data-id="${r.id}">Delete</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('button[data-act]').forEach(btn=>{
+    btn.addEventListener('click',async ()=>{
+      const id=btn.dataset.id, act=btn.dataset.act;
+      const all=await dbGetAll('reports');
+      const r=all.find(x=>x.id===id);
+      if(!r) return;
+      const filename=`PM_Report_${(r.site||'report').replace(/\s+/g,'_')}_${r.date||''}.pdf`;
+      const blob=dataURLtoBlob(r.pdfDataUrl);
+      if(act==='share') await sharePDF(blob,filename);
+      else if(act==='download') downloadBlob(blob,filename);
+      else if(act==='delete'){
+        if(confirm('Delete this report permanently?')){
+          await dbDelete('reports',id);
+          renderSavedList();
+        }
+      }
+    });
+  });
+}
+function dataURLtoBlob(dataUrl){
+  const [meta,b64]=dataUrl.split(',');
+  const mime=meta.match(/:(.*?);/)[1];
+  const bin=atob(b64);
+  const arr=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+
+/* ================= Settings: Checklist Sections & Custom Items ================= */
+function renderSectionToggles(){
+  const wrap=document.getElementById('sectionTogglesWrap');
+  const toggles=loadSectionToggles();
+  wrap.innerHTML='';
+  DEFAULT_SECTIONS.forEach(sec=>{
+    const row=document.createElement('label');
+    row.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;font-weight:600;color:var(--steel);cursor:pointer;';
+    row.innerHTML=`<input type="checkbox" data-key="${sec.key}" ${toggles[sec.key]!==false?'checked':''} style="width:18px;height:18px;flex-shrink:0;">${sec.name}<span style="color:var(--muted);font-weight:400;font-size:12px;margin-left:auto;">${sec.items.length} items</span>`;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change',()=>{
+      const t=loadSectionToggles();
+      t[cb.dataset.key]=cb.checked;
+      saveSectionToggles(t);
+      toast('Checklist sections updated');
+    });
+  });
+}
+function renderTemplateEditor(){
+  const wrap=document.getElementById('templateWrap');
+  const list=loadCustomItems();
+  wrap.innerHTML='';
+  list.forEach((q,idx)=>{
+    const row=document.createElement('div');
+    row.style.display='flex'; row.style.gap='6px'; row.style.marginBottom='8px';
+    row.innerHTML=`
+      <input type="text" value="${q.replace(/"/g,'&quot;')}" data-idx="${idx}" style="flex:1;">
+      <button class="btn btn-danger btn-sm" data-rm="${idx}" style="width:auto;">✕</button>
+    `;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('[data-rm]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const list=loadCustomItems();
+      list.splice(+b.dataset.rm,1);
+      saveCustomItemsList(list);
+      renderTemplateEditor();
+    });
+  });
+}
+document.getElementById('btnAddTemplateItem').addEventListener('click',()=>{
+  const list=loadCustomItems();
+  list.push('New check item');
+  saveCustomItemsList(list);
+  renderTemplateEditor();
+});
+document.getElementById('btnSaveTemplate').addEventListener('click',()=>{
+  const inputs=document.querySelectorAll('#templateWrap input[data-idx]');
+  const list=Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
+  saveCustomItemsList(list);
+  toast('Checklist items saved');
+});
+document.getElementById('btnSaveSettings').addEventListener('click',saveSettingsFromForm);
+document.getElementById('btnClearAll').addEventListener('click',async ()=>{
+  if(confirm('This will permanently delete ALL saved reports on this device. Continue?')){
+    await dbClear('reports');
+    renderSavedList();
+    updateStorageInfo();
+    toast('All reports deleted');
+  }
+});
+async function updateStorageInfo(){
+  const reports=await dbGetAll('reports');
+  document.getElementById('storageInfo').textContent=`${reports.length} report(s) saved on this device.`;
+}
+
+/* ================= Tabs / Navigation ================= */
+function switchView(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===name));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+  if(name==='saved') renderSavedList();
+  if(name==='settings'){ renderSectionToggles(); renderTemplateEditor(); updateStorageInfo(); }
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchView(t.dataset.view)));
+
+/* ================= Init ================= */
+(async function init(){
+  await openDB();
+  loadSettings();
+  initCatalogUI();
+  resetForm();
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+})();
+</script>
+</body>
+</html>
